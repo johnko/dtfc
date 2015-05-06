@@ -11,32 +11,33 @@ I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachme
 
 ## THOUGHTS
 
+- [ ] Integrate groupcache
 - Flags:
-  - Listen on IP:PORT
-  - Storage path
-  - Peer list (file? dynamic?)
-  - filter?
-  - couchdb on localhost? to save map of sha512/filename
+  - [x] Listen on IP:PORT
+  - [x] Storage path
+  - [ ] Peer list (file? dynamic?)
+  - [ ] filtered replication?
+  - [ ] couchdb on localhost? to save map of sha512/filename
 - Permissions:
-  - rwx like Unix 777, except it's GET, PUT, DELETE
-  - if file named "404" exists, return HTTP.404
-  - if file named "403" exists, return HTTP.403
+  - [ ] rwx like Unix 777, except it's GET, PUT, DELETE
+  - [ ] if file named "404" exists, return HTTP.404
+  - [ ] if file named "403" exists, return HTTP.403
 - Throttling:
-  - Firewall max-conn-per-ip?
-  - Token from CouchDB session?
+  - [ ] Firewall max-conn-per-ip?
+  - [ ] Token from CouchDB session?
 - Storage:
-  - storage path + sha512 hash (split every 2 chars) + "data"
-  - save whole file as is in "data"
-  - map file name to sha512
-  - if possible keep the Storage path on a separate mount so you can run "df -h"
-  - Verify sha512 before saving.
+  - [x] storage path + sha512 hash (split every 2 chars) + "data"
+  - [x] save whole file as is in "data"
+  - [ ] map file name to sha512
+  - [ ] if possible keep the Storage path on a separate mount so you can run "df -h"
+  - [x] Verify sha512 before saving. (it's part of the save process)
 - In Response to:
-  - PUT /filename: JSON of sha512 and filename
-  - GET /health: 200 OK
-  - GET /sha512: data
-  - DELETE /sha512: ???
+  - [x] PUT /filename: JSON of sha512 and filename
+  - [x] GET /health: 200 OK
+  - [ ] GET /sha512: data
+  - [ ] DELETE /sha512: ???
 - Proxy:
-  - NginX for SSL & round robin load balancing
+  - [ ] NginX for SSL & round robin load balancing
 
 ## HOW
 
