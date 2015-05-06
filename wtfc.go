@@ -84,7 +84,7 @@ func Sha512Word(word string) (hash string, err error) {
 }
 
 func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash string, err error) {
-	oldpath := filepath.Join(s.basedir, token)
+	oldpath := filepath.Join(config.Temp, token)
 	if _, err = os.Lstat(filepath.Join(oldpath, filename)); err != nil {
 		return
 	}
@@ -128,7 +128,7 @@ func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash strin
 }
 
 func (s *LocalStorage) DeleteFile(token string, filename string) error {
-	oldpath := filepath.Join(s.basedir, token)
+	oldpath := filepath.Join(config.Temp, token)
 	os.Remove(filepath.Join(oldpath, filename))
 	os.Remove(filepath.Join(oldpath))
 	return nil

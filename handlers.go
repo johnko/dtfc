@@ -94,7 +94,7 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 			contentLength = n
 		}
 		token := Encode(10000000 + int64(rand.Intn(1000000000)))
-		log.Printf("Uploading %s %s %d %s", token, filename, contentLength)
+		log.Printf("Uploading %s %s %d", token, filename, contentLength)
 		if err = storage.Put(token, filename, reader, uint64(contentLength)); err != nil {
 			log.Printf("%s", err.Error())
 			http.Error(w, errors.New("Could not save file").Error(), 500)
