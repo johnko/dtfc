@@ -45,6 +45,8 @@ const SERVER_VERSION = "0.0.1"
 
 // we use these commands to reduce the amount of garbage collection golang needs to do
 const cmdSHASUM = "/usr/local/bin/shasum"
+// or on Apple using Macports
+//const cmdSHASUM = "/opt/local/bin/shasum"
 const cmdSHA512 = "/sbin/sha512"
 const cmdTAIL   = "/usr/bin/tail"
 
