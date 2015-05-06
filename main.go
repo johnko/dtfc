@@ -64,7 +64,7 @@ var config struct {
 var storage Storage
 
 func init() {
-	//config.Temp = os.TempDir()
+	config.Temp = os.TempDir()
 }
 
 func main() {
@@ -118,11 +118,11 @@ func main() {
 		log.Panic("Error while creating storage.", err)
 	}
 
-	log.Printf("%s/%s server started. :\nlistening on port: %v",
+	log.Printf("%s/%s server started. listening on port: %v",
         SERVER_INFO, SERVER_VERSION, *port)
-    log.Printf("using temp folder: %s\nusing storage provider: %s",
+    log.Printf("using temp folder: %s, using storage provider: %s",
         config.Temp, *provider)
-    log.Printf("allow delete: %s\nallow get: %s\nallow put: %s",
+    log.Printf("allow delete: %s, allow get: %s, allow put: %s",
         config.ALLOWDELETE, config.ALLOWGET, config.ALLOWPUT)
 	log.Printf("---------------------------")
 
