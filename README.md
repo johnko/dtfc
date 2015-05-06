@@ -14,6 +14,7 @@ I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachme
 - [ ] Integrate groupcache
 - Flags:
   - [x] Listen on IP:PORT
+  - [ ] groupcache IP:PORT
   - [x] Storage path
   - [ ] Peer list (file? dynamic?)
   - [ ] filtered replication?
@@ -46,6 +47,9 @@ I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachme
 
 ## SECURITY
 
+- do not run as root, create a non-priviledged user
+- use a rate limiting firewall
+- [ ] figure out how to do authentication/authorization
 - groupcache uses HTTP, you should only communicate with peers over a secure channel, and segregate this HTTP traffic from other internal network traffic.
 
 ## INSPIRATION FROM

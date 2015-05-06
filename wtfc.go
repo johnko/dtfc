@@ -60,7 +60,7 @@ func NameLengthTime(path string) (filename string, contentLength uint64, modTime
 	return
 }
 
-func Sha512Word(word string) (hash string, err error) {
+func Sha512(str string, word string) (hash string, err error) {
 	// FreeBSD specific call /sbin/sha512 instead of using the import crypto/sha512
 	// because the import has high memory usage (loads the data in RAM)
 	// and Go lang uses garbage collection so the high RAM lingers
@@ -72,14 +72,21 @@ func Sha512Word(word string) (hash string, err error) {
 	//}
 
 	// TODO: is shasum + awk more universal on *nix systems?
-	cmd := exec.Command(cmdSHASUM, "-a", "512", "-")
-	cmd.Stdin = strings.NewReader(word)
+	cmd := exec.Command(cmdSHASUM, "-a", "512", str)
+	if (word != nil) {
+		cmd.Stdin = strings.NewReader(word)
+	}
 	tmpout, err := cmd.Output()
+	// Assume the first output before space is the hash
+	hash = strings.Split(strings.TrimSpace(fmt.Sprintf("%s", tmpout)), " ")[0]
+	return
+}
+
+func Sha512Word(word string) (hash string, err error) {
+	hash, err := Sha512("-", word)
 	if err != nil {
 		return
 	}
-	// Assume the first output before space is the hash
-	hash = strings.Split(strings.TrimSpace(fmt.Sprintf("%s", tmpout)), " ")[0]
 	return
 }
 
@@ -88,23 +95,10 @@ func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash strin
 	if _, err = os.Lstat(filepath.Join(oldpath, filename)); err != nil {
 		return
 	}
-	// FreeBSD specific call /sbin/sha512 instead of using the import crypto/sha512
-	// because the import has high memory usage (loads the data in RAM)
-	// and Go lang uses garbage collection so the high RAM lingers
-	// Assume the output is the hash, need to trim \n
-
-	//hash, err := exec.Command(cmdSHA512, "-q", filepath.Join(oldpath, filename)).Output()
-	//if err != nil {
-	//      return
-	//}
-
-	// TODO: is shasum + awk more universal on *nix systems?
-	tmpout, err := exec.Command(cmdSHASUM, "-a", "512", filepath.Join(oldpath, filename)).Output()
+	hash, err := Sha512(filepath.Join(oldpath, filename), nil)
 	if err != nil {
 		return
 	}
-	// Assume the first output before space is the hash
-	hash = strings.Split(strings.TrimSpace(fmt.Sprintf("%s", tmpout)), " ")[0]
 	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash))
 	// mkdir -p
 	if err = os.MkdirAll(newpath, 0700); err != nil && !os.IsExist(err) {
