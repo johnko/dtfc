@@ -1,0 +1,97 @@
+#!/bin/sh
+# Copyright (c) 2015, John Ko
+# PROVIDE: dtfc
+# REQUIRE: FILESYSTEMS LOGIN NETWORKING
+. /etc/rc.subr
+
+MYUSER="dtfc"
+name="dtfc"
+MYPORT="8080"
+ALLOWDELETE="true"
+ALLOWGET="true"
+ALLOWPUT="true"
+
+start_cmd="my_start"
+stop_cmd="my_stop"
+mylog="/var/log/${name}.log"
+MYBASE="/usr/home/${MYUSER}/base"
+mytmp="/usr/home/${MYUSER}/tmp"
+my_start()
+{
+    # test variables in this function before using them
+    if     [ "x" = "x${mylog}" ]; then
+        echo "Variable mylog undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${MYUSER}" ]; then
+        echo "Variable MYUSER undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${mytmp}" ]; then
+        echo "Variable mytmp undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${MYBASE}" ]; then
+        echo "Variable MYBASE undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${name}" ]; then
+        echo "Variable name undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${MYPORT}" ]; then
+        echo "Variable MYPORT undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${ALLOWPUT}" ]; then
+        echo "Variable ALLOWPUT undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${ALLOWDELETE}" ]; then
+        echo "Variable ALLOWDELETE undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${ALLOWGET}" ]; then
+        echo "Variable ALLOWGET undefined in $0" >&2
+        exit 1
+    fi
+    # create log
+    touch ${mylog} && chown ${MYUSER} \
+          ${mylog}
+    # create tmp and base
+    [ -d ${mytmp}  ] || install -d -o ${MYUSER} \
+         ${mytmp}
+    [ -d ${MYBASE} ] || install -d -o ${MYUSER} \
+         ${MYBASE}
+    # run server as user on PORT
+    /usr/local/bin/sudo -u ${MYUSER} -i -- \
+        /usr/home/${MYUSER}/${name}-server \
+            --provider           local \
+            --port               ${MYPORT} \
+            --temp               ${mytmp}/ \
+            --basedir            ${MYBASE}/ \
+            --allowdelete        ${ALLOWDELETE} \
+            --allowget           ${ALLOWGET} \
+            --allowput           ${ALLOWPUT} \
+            --log                ${mylog} &
+}
+my_stop()
+{
+    # test variables in this function before using them
+    if [ "x" = "x${name}" ]; then
+        echo "Variable name undefined in $0" >&2
+        exit 1
+    fi
+    # TODO need a more elegant solution than loop to kill
+    local LOOP=1
+    while [ $LOOP -eq 1 ]; do
+        if  /bin/pgrep -lf ${name}-server > /dev/null 2> /dev/null ; then
+            /bin/pkill -lf ${name}-server > /dev/null 2> /dev/null
+        else
+            local LOOP=0
+        fi
+        sleep 1
+    done
+}
+load_rc_config $name
+run_rc_command "$1"
