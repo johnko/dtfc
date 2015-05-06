@@ -31,7 +31,7 @@ I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachme
   - if possible keep the Storage path on a separate mount so you can run "df -h"
   - Verify sha512 before saving.
 - In Response to:
-  - PUT /filename: JSON sha512
+  - PUT /filename: JSON of sha512 and filename
   - GET /health: 200 OK
   - GET /sha512: data
   - DELETE /sha512: ???
