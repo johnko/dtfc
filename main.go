@@ -66,7 +66,7 @@ var config struct {
 var storage Storage
 
 func init() {
-	config.Temp = os.TempDir()
+	//config.Temp = os.TempDir()
 }
 
 func main() {
