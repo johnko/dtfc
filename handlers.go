@@ -56,7 +56,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func putHandler(w http.ResponseWriter, r *http.Request) {
-	if config.ALLOWUPLOAD == "true" {
+	if config.ALLOWPUT == "true" {
 		vars := mux.Vars(r)
 		filename := sanitize.Path(filepath.Base(vars["filename"]))
 		contentLength := r.ContentLength
