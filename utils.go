@@ -29,11 +29,6 @@ SOFTWARE.
 package main
 
 import (
-	"github.com/golang/gddo/httputil/header"
-	"math"
-	"net/http"
-	"net/mail"
-	"strconv"
 	"strings"
 )
 

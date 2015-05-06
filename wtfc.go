@@ -26,13 +26,8 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"

@@ -36,9 +36,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
 	"time"
 )
 

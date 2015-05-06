@@ -43,8 +43,6 @@ import (
 	"path/filepath"
 	//"strconv"
 	"strings"
-	"unicode"
-	"unicode/utf8"
 )
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
@@ -120,7 +118,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	if config.ALLOWGET == "true" {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
-		filename, reader, _, _, modTime, err := storage.Seeker(hash)
+		filename, reader, _, modTime, err := storage.Seeker(hash)
 		if err != nil {
 			if strings.Index(err.Error(), "no such file or directory") >= 0 {
 				log.Printf("%s", err.Error())
