@@ -7,6 +7,8 @@ The backend db file increases in size forever until compacted. A large db file w
 
 A db of large files, like photos and videos for example, would be painful to maintain.
 
+I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachments.
+
 ## THOUGHTS
 
 - Flags:

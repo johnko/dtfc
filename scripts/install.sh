@@ -22,7 +22,7 @@ if [ "FreeBSD" = "`uname -s`" ]; then
     install -m 644 load-dependencies.sh /opt/load-dependencies.sh
     sudo -u ${MYUSER} -i -- sh /opt/load-dependencies.sh
     install -d -m 755 /usr/local/etc/rc.d
-    install -m 755 dtfc.rc /usr/local/etc/rc.d/${name}
+    install -m 755 extras/dtfc.rc /usr/local/etc/rc.d/${name}
     chmod a+x /usr/local/etc/rc.d/${name}
     if [ ! -e main ]; then
     	sudo -u ${MYUSER} -- sh ./build-server.sh
