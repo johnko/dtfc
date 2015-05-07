@@ -29,7 +29,6 @@ SOFTWARE.
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"github.com/PuerkitoBio/ghost/handlers"
@@ -119,7 +118,7 @@ func main() {
 	config.ALLOWGET = *allowget
 	config.ALLOWPUT = *allowput
 	config.ME = *me
-	config.PEERS, err = readLines(peerlist)
+	config.PEERS, err = readLines(*peerlist)
 	if err != nil {
 		log.Panic("Error while reading peerlist.", err)
 	}

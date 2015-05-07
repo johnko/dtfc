@@ -43,6 +43,7 @@ import (
 	"path/filepath"
 	//"strconv"
 	"strings"
+	"time"
 )
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
@@ -116,8 +117,8 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 
 func getHandler(w http.ResponseWriter, r *http.Request) {
 	var filename string
-	var reader io.Reader
-	var modTime Time
+	var reader io.ReadSeeker
+	var modTime time.Time
 	var err error
 	if config.ALLOWGET == "true" {
 		vars := mux.Vars(r)
@@ -128,8 +129,8 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 				log.Printf("%s", err.Error())
 				// try from peer
 				var found = false
-				var file os.File
-				var resp Response
+				var file *os.File
+				var resp *http.Response
 				for i := range config.PEERS {
 					if (config.PEERS[i] != config.ME) && (found == false) {
 						file, err = ioutil.TempFile(config.Temp, "peer-")
@@ -139,9 +140,9 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 							return
 						}
 						defer file.Close()
-						resp, err = http.Get(config.PEERS[i] + "/" + hash)
+						resp, err = http.Get(config.PEERS[i] + hash)
 						defer resp.Body.Close()
-						n, err = io.Copy(file, resp.Body)
+						_, err = io.Copy(file, resp.Body)
 						if err != nil {
 							os.Remove(file.Name())
 							log.Printf("%s", err.Error())
