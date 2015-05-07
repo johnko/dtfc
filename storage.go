@@ -82,7 +82,6 @@ func (s *LocalStorage) Seeker(token string) (filename string, reader io.ReadSeek
 func (s *LocalStorage) Put(token string, filename string, reader io.Reader, contentLength uint64) error {
 	var err error
 	var f io.WriteCloser
-	//path := filepath.Join(s.basedir, token)
 	path := filepath.Join(config.Temp, token)
 	if err = os.Mkdir(path, 0700); err != nil && !os.IsExist(err) {
 		return err
