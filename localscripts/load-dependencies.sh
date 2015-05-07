@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export GOPATH=/opt/go/
+export GOPATH=~/opt/go/
 
 go get "github.com/PuerkitoBio/ghost/handlers"
 #go get "github.com/golang/gddo/httputil/header"

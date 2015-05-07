@@ -44,9 +44,9 @@ const SERVER_INFO = "dtfc"
 const SERVER_VERSION = "0.0.1"
 
 // we use these commands to reduce the amount of garbage collection golang needs to do
-const cmdSHASUM = "/usr/local/bin/shasum"
+const cmdSHASUMFreeBSD = "/usr/local/bin/shasum"
 // or on Apple using Macports
-//const cmdSHASUM = "/opt/local/bin/shasum"
+const cmdSHASUMApple = "/opt/local/bin/shasum"
 const cmdSHA512 = "/sbin/sha512"
 const cmdTAIL   = "/usr/bin/tail"
 
@@ -65,12 +65,25 @@ var config struct {
 
 var storage Storage
 
+var cmdSHASUM string
+
 func init() {
 	config.Temp = os.TempDir()
 }
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
+
+	var err error
+	if _, err = os.Lstat(cmdSHASUMFreeBSD); err == nil {
+		cmdSHASUM = cmdSHASUMFreeBSD
+	}
+	if _, err = os.Lstat(cmdSHASUMApple); err == nil {
+		cmdSHASUM = cmdSHASUMApple
+	}
+	if _, err = os.Lstat(cmdSHASUM); err != nil {
+		log.Panic("Error while looking for shasum executable.")
+	}
 
 	port        := flag.String("port", "8080", "port number, default: 8080")
 	temp        := flag.String("temp", config.Temp, "")
@@ -108,7 +121,6 @@ func main() {
 
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
-	var err error
 	switch *provider {
 	case "local":
 		if *basedir == "" {

@@ -131,7 +131,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
-		http.ServeContent(w, r, "", modTime, reader)
+		http.ServeContent(w, r, filename, modTime, reader)
 	} else {
 		http.Error(w, "403 Forbidden. Downloading is disabled.", 403)
 	}
@@ -141,6 +141,7 @@ func RedirectHandler(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/health.html" {
 		} else if ipAddrFromRemoteAddr(r.Host) == "127.0.0.1" {
+		} else if ipAddrFromRemoteAddr(r.Host) == "::1" {
 		} else if r.Header.Get("X-Forwarded-Proto") != "https" && r.Method == "GET" {
 			http.Redirect(w, r, "https://"+r.Host+r.RequestURI, 301)
 			return

@@ -73,7 +73,7 @@ func Sha512(str string, word string) (hash string, err error) {
 
 	// TODO: is shasum + awk more universal on *nix systems?
 	cmd := exec.Command(cmdSHASUM, "-a", "512", str)
-	if (word != nil) {
+	if (word != "") {
 		cmd.Stdin = strings.NewReader(word)
 	}
 	tmpout, err := cmd.Output()
@@ -83,7 +83,7 @@ func Sha512(str string, word string) (hash string, err error) {
 }
 
 func Sha512Word(word string) (hash string, err error) {
-	hash, err := Sha512("-", word)
+	hash, err = Sha512("-", word)
 	if err != nil {
 		return
 	}
@@ -95,7 +95,7 @@ func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash strin
 	if _, err = os.Lstat(filepath.Join(oldpath, filename)); err != nil {
 		return
 	}
-	hash, err := Sha512(filepath.Join(oldpath, filename), nil)
+	hash, err = Sha512(filepath.Join(oldpath, filename), "")
 	if err != nil {
 		return
 	}

@@ -4,7 +4,7 @@
 MYUSER="dtfc"
 name="dtfc"
 
-SCRIPTDIR="./scripts"
+SCRIPTDIR="./localscripts"
 
 exiterror() {
     exitcode=$1
