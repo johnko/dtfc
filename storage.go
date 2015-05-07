@@ -41,6 +41,7 @@ type Storage interface {
 	Head(token string) (filename string, contentLength uint64, modTime time.Time, err error)
 	Put(token string, filename string, reader io.Reader, contentLength uint64) error
 
+	HardLinkSha512Path(oldpath string) (hash string, err error)
 	HardLinkSha512(token string, filename string) (hash string, err error)
 	DeleteFile(token string, filename string) error
 }

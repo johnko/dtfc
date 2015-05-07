@@ -90,6 +90,29 @@ func Sha512Word(word string) (hash string, err error) {
 	return
 }
 
+func (s *LocalStorage) HardLinkSha512Path(oldpath string) (hash string, err error) {
+	if _, err = os.Lstat(oldpath); err != nil {
+		return
+	}
+	hash, err = Sha512(oldpath, "")
+	if err != nil {
+		return
+	}
+	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash))
+	// mkdir -p
+	if err = os.MkdirAll(newpath, 0700); err != nil && !os.IsExist(err) {
+		return
+	}
+	// Link the oldpath to sha512/data
+	if err = os.Link(oldpath, filepath.Join(newpath, "data")); err != nil {
+		if strings.Index(err.Error(), "file exists") >= 0 {
+			err = nil
+		}
+	}
+	os.Remove(oldpath)
+	return
+}
+
 func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash string, err error) {
 	oldpath := filepath.Join(config.Temp, token)
 	if _, err = os.Lstat(filepath.Join(oldpath, filename)); err != nil {
@@ -124,6 +147,6 @@ func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash strin
 func (s *LocalStorage) DeleteFile(token string, filename string) error {
 	oldpath := filepath.Join(config.Temp, token)
 	os.Remove(filepath.Join(oldpath, filename))
-	os.Remove(filepath.Join(oldpath))
+	os.Remove(oldpath)
 	return nil
 }

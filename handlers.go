@@ -105,7 +105,6 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 		var hash string
 		if hash, err = storage.HardLinkSha512(token, filename); err != nil {
 			log.Printf("%s", err.Error())
-			//fmt.Fprintf(w, "https://%s%s/%s/%s\n", ipAddrFromRemoteAddr(r.Host), config.NONROOTPATH, token, filename)
 		} else if err == nil {
 			log.Printf("Hashed %s %s as %s", token, filename, hash)
 			fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\"}", hash, filename)
@@ -121,7 +120,6 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var modTime time.Time
 	var err error
 	gouseragent := regexp.MustCompile("Go.*package http")
-	filenamerx := regexp.MustCompile("filename=\"(.*)\"")
 	if config.ALLOWGET == "true" {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
@@ -147,41 +145,23 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 							defer file.Close()
 							resp, err = http.Get(url)
 							if err == nil {
-								defer resp.Body.Close()
-								_, err = io.Copy(file, resp.Body)
-								if err != nil {
-									os.Remove(file.Name())
-									log.Printf("%s", err.Error())
-									http.Error(w, "Internal server error.", 500)
-									return
-								}
-								reader, err = os.Open(file.Name())
-
-								var fi os.FileInfo
-								if fi, err = os.Lstat(file.Name()); err != nil {
-									return
-								}
-								contentLength = uint64(fi.Size())
-
-								filename = filenamerx.FindStringSubmatch(r.Header)[0]
-
-								token := Encode(10000000 + int64(rand.Intn(1000000000)))
-								log.Printf("Getting from peer %s %s %d", token, "data", contentLength)
-								if err = storage.Put(token, "data", reader, uint64(contentLength)); err != nil {
-									log.Printf("%s", err.Error())
-									http.Error(w, errors.New("Could not save file").Error(), 500)
-									return
-								}
-								var hash string
-								if hash, err = storage.HardLinkSha512(token, file.Name()); err != nil {
-									log.Printf("%s", err.Error())
-									//fmt.Fprintf(w, "https://%s%s/%s/%s\n", ipAddrFromRemoteAddr(r.Host), config.NONROOTPATH, token, filename)
-								} else if err == nil {
-									log.Printf("Hashed %s %s as %s", token, "data", hash)
-									//fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\"}", hash, filename)
-									filename, reader, _, modTime, err = storage.Seeker(hash)
+								if resp.StatusCode == 200 {
+									defer resp.Body.Close()
+									_, err = io.Copy(file, resp.Body)
 									if err != nil {
-										found = false
+										os.Remove(file.Name())
+										log.Printf("%s", err.Error())
+										http.Error(w, "Internal server error.", 500)
+										return
+									}
+									var hash string
+									if hash, err = storage.HardLinkSha512Path(file.Name()); err != nil {
+										log.Printf("%s", err.Error())
+									} else if err == nil {
+										filename, reader, _, modTime, err = storage.Seeker(hash)
+										if err == nil {
+											found = true
+										}
 									}
 								}
 							}
