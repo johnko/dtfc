@@ -120,6 +120,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var modTime time.Time
 	var err error
 	gouseragent := regexp.MustCompile("Go.*package http")
+	fnre := regexp.MustCompile("filename=\".*\"")
 	if config.ALLOWGET == "true" {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
@@ -146,6 +147,18 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 							resp, err = http.Get(url)
 							if err == nil {
 								if resp.StatusCode == 200 {
+									if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
+										filename = strings.Replace(
+											strings.Replace(
+												fnre.FindString(
+													resp.Header.Get("Content-Disposition")),
+												"filename=",
+												"",
+												-1),
+											"\"",
+											"",
+											-1)
+									}
 									defer resp.Body.Close()
 									_, err = io.Copy(file, resp.Body)
 									if err != nil {
@@ -155,7 +168,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 										return
 									}
 									var hash string
-									if hash, err = storage.HardLinkSha512Path(file.Name()); err != nil {
+									if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
 										log.Printf("%s", err.Error())
 									} else if err == nil {
 										filename, reader, _, modTime, err = storage.Seeker(hash)
