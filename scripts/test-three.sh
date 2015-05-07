@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPTDIR="./localscripts"
+SCRIPTDIR="./scripts"
 LOCALHOST="127.0.0.1"
 BASEDIR="${HOME}/z/test-three-base"
 TEMPDIR="${HOME}/z/test-three-tmp"
