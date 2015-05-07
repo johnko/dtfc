@@ -26,7 +26,7 @@ mkdir -p "${BASEDIR}"
 mkdir -p "${TEMPDIR}"
 touch "${LOGFILE}"
 
-./main --port ${LOCALPORT} --basedir "${BASEDIR}" --temp "${TEMPDIR}" --log "${LOGFILE}" &
+./main --port ${LOCALPORT} --basedir "${BASEDIR}" --temp "${TEMPDIR}" --log "${LOGFILE}" --me "http://${LOCALHOST}:8001/" --peerlist extras/peerlist-one.txt &
 TESTPID=$!
 echo ${TESTPID}
 
