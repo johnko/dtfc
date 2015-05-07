@@ -9,6 +9,17 @@ A db of large files, like photos and videos for example, would be painful to mai
 
 I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachments.
 
+## BUILD DEPENDENCIES
+
+see `load-dependencies.sh`
+
+## RUN DEPENDENCIES
+
+- shasum: `/usr/local/bin/shasum` or `/opt/local/bin/shasum`
+
+- tail: `/usr/bin/tail`
+
+
 ## THOUGHTS
 
 - [ ] Integrate groupcache
