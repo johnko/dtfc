@@ -57,6 +57,6 @@ curl -s -v -X GET http://${LOCALHOST}:8005/13377b3886e4f6fa1db0610fe4983f3bfa8fa
 
 kill `cat ${PIDFILE}4`
 
-curl -s -v -X GET http://${LOCALHOST}:8005/404 2>&1 | grep '404 Not Found.' || exiterror 1 "This is supposed to 404"
+curl -s -v -X GET http://${LOCALHOST}:8005/404 2>&1 | grep '404 Not Found\.' || exiterror 1 "This is supposed to 404"
 
 kill `cat ${PIDFILE}5`
