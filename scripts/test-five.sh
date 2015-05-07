@@ -23,7 +23,7 @@ launchenv() {
     ./main --port 800${1} --basedir "${BASEDIR}${1}" --temp "${TEMPDIR}${1}" --log "${LOGFILE}${1}" --me "http://${LOCALHOST}:800${1}/" --peerlist extras/peerlist-five.txt &
     echo $! >"${PIDFILE}${1}"
     sleep 1
-    curl -s -X GET http://${LOCALHOST}:800${1}/health.html | grep 'All systems go.' >/dev/null || exiterror 1 "couldn't GET health.html"
+    curl -s -X GET http://${LOCALHOST}:800${1}/health.html | grep 'All systems go.' || exiterror 1 "couldn't GET health.html"
 }
 
 sh ${SCRIPTDIR}/build-server.sh
@@ -39,24 +39,24 @@ launchenv 4
 launchenv 5
 
 
-curl -s -v -X PUT --data-binary @LICENSE http://${LOCALHOST}:8001/license.txt 2>&1 | grep '13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8' >/dev/null || exiterror 1 "couldn't PUT license.txt"
+curl -s -v -X PUT --data-binary @LICENSE http://${LOCALHOST}:8001/license.txt 2>&1 | grep '13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8' || exiterror 1 "couldn't PUT license.txt"
 
-curl -s -v -X GET http://${LOCALHOST}:8002/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' >/dev/null || exiterror 1 "couldn't GET license.txt"
+curl -s -v -X GET http://${LOCALHOST}:8002/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
 kill `cat ${PIDFILE}1`
 
-curl -s -v -X GET http://${LOCALHOST}:8003/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' >/dev/null || exiterror 1 "couldn't GET license.txt"
+curl -s -v -X GET http://${LOCALHOST}:8003/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
 kill `cat ${PIDFILE}2`
 
-curl -s -v -X GET http://${LOCALHOST}:8004/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' >/dev/null || exiterror 1 "couldn't GET license.txt"
+curl -s -v -X GET http://${LOCALHOST}:8004/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
 kill `cat ${PIDFILE}3`
 
-curl -s -v -X GET http://${LOCALHOST}:8005/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' >/dev/null || exiterror 1 "couldn't GET license.txt"
+curl -s -v -X GET http://${LOCALHOST}:8005/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
 kill `cat ${PIDFILE}4`
 
-curl -s -v -X GET http://${LOCALHOST}:8005/404 2>&1 | grep '404 Not Found.' >/dev/null || exiterror 1 "This is supposed to 404"
+curl -s -v -X GET http://${LOCALHOST}:8005/404 2>&1 | grep '404 Not Found.' || exiterror 1 "This is supposed to 404"
 
 kill `cat ${PIDFILE}5`
