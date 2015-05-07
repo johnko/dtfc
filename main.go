@@ -126,6 +126,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health.html", healthHandler).Methods("GET")
+	r.HandleFunc("/{hash}/{limit}", getHandler).Methods("GET")
 	r.HandleFunc("/{hash}", getHandler).Methods("GET")
 
 	//r.HandleFunc("/{hash}", headHandler).Methods("HEAD")

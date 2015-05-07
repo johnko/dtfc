@@ -41,7 +41,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	//"strconv"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -120,9 +120,11 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var reader io.ReadSeeker
 	var modTime time.Time
 	var err error
+	var limit = 1
 	if config.ALLOWGET == "true" {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
+		limit, _ = strconv.Atoi(vars["limit"])
 		filename, reader, _, modTime, err = storage.Seeker(hash)
 		if err != nil {
 			if strings.Index(err.Error(), "no such file or directory") >= 0 {
@@ -131,28 +133,30 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 				var found = false
 				var file *os.File
 				var resp *http.Response
-				for i := range config.PEERS {
-					if (config.PEERS[i] != config.ME) && (found == false) {
-						file, err = ioutil.TempFile(config.Temp, "peer-")
-						if err != nil {
-							log.Printf("%s", err.Error())
-							http.Error(w, "Internal server error.", 500)
-							return
-						}
-						defer file.Close()
-						resp, err = http.Get(config.PEERS[i] + hash)
-						defer resp.Body.Close()
-						_, err = io.Copy(file, resp.Body)
-						if err != nil {
-							os.Remove(file.Name())
-							log.Printf("%s", err.Error())
-							http.Error(w, "Internal server error.", 500)
-							return
-						}
-						reader, err = os.Open(file.Name())
-						filename, reader, _, modTime, err = storage.Seeker(hash)
-						if err == nil {
-							found = true
+				if limit > 0 {
+					for i := range config.PEERS {
+						if (config.PEERS[i] != config.ME) && (found == false) {
+							file, err = ioutil.TempFile(config.Temp, "peer-")
+							if err != nil {
+								log.Printf("%s", err.Error())
+								http.Error(w, "Internal server error.", 500)
+								return
+							}
+							defer file.Close()
+							resp, err = http.Get(config.PEERS[i] + hash + "/" + strconv.Itoa(limit-1))
+							defer resp.Body.Close()
+							_, err = io.Copy(file, resp.Body)
+							if err != nil {
+								os.Remove(file.Name())
+								log.Printf("%s", err.Error())
+								http.Error(w, "Internal server error.", 500)
+								return
+							}
+							reader, err = os.Open(file.Name())
+							filename, reader, _, modTime, err = storage.Seeker(hash)
+							if err == nil {
+								found = true
+							}
 						}
 					}
 				}
