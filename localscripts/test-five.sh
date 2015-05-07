@@ -20,7 +20,7 @@ launchenv() {
     mkdir -p "${BASEDIR}${1}"
     mkdir -p "${TEMPDIR}${1}"
     touch "${LOGFILE}${1}"
-    ./main --port 800${1} --basedir "${BASEDIR}${1}" --temp "${TEMPDIR}${1}" --log "${LOGFILE}${1}" --me "http://${LOCALHOST}:800${1}/" --peerlist extras/peerlist.txt &
+    ./main --port 800${1} --basedir "${BASEDIR}${1}" --temp "${TEMPDIR}${1}" --log "${LOGFILE}${1}" --me "http://${LOCALHOST}:800${1}/" --peerlist extras/peerlist-five.txt &
     echo $! >"${PIDFILE}${1}"
     sleep 1
     curl -X GET http://${LOCALHOST}:800${1}/health.html || exiterror 1 "couldn't GET health.html"
