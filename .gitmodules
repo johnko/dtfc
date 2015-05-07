@@ -1,0 +1,24 @@
+[submodule ".godeps/src/github.com/gorilla/mux"]
+	path = .godeps/src/github.com/gorilla/mux
+	url = https://github.com/gorilla/mux
+[submodule ".godeps/src/golang.org/x/net"]
+	path = .godeps/src/golang.org/x/net
+	url = https://go.googlesource.com/net
+[submodule ".godeps/src/github.com/PuerkitoBio/ghost"]
+	path = .godeps/src/github.com/PuerkitoBio/ghost
+	url = https://github.com/PuerkitoBio/ghost
+[submodule ".godeps/src/github.com/garyburd/redigo"]
+	path = .godeps/src/github.com/garyburd/redigo
+	url = https://github.com/garyburd/redigo
+[submodule ".godeps/src/github.com/gorilla/context"]
+	path = .godeps/src/github.com/gorilla/context
+	url = https://github.com/gorilla/context
+[submodule ".godeps/src/github.com/gorilla/securecookie"]
+	path = .godeps/src/github.com/gorilla/securecookie
+	url = https://github.com/gorilla/securecookie
+[submodule ".godeps/src/github.com/kennygrant/sanitize"]
+	path = .godeps/src/github.com/kennygrant/sanitize
+	url = https://github.com/kennygrant/sanitize
+[submodule ".godeps/src/github.com/nu7hatch/gouuid"]
+	path = .godeps/src/github.com/nu7hatch/gouuid
+	url = https://github.com/nu7hatch/gouuid
