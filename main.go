@@ -84,6 +84,9 @@ func main() {
 	if _, err = os.Lstat(cmdSHASUM); err != nil {
 		log.Panic("Error while looking for shasum executable.")
 	}
+	if _, err = os.Lstat(cmdTAIL); err != nil {
+		log.Panic("Error while looking for tail executable.")
+	}
 
 	port        := flag.String("port", "8080", "port number, default: 8080")
 	temp        := flag.String("temp", config.Temp, "")
@@ -99,7 +102,7 @@ func main() {
 	if *logpath != "" {
 		f, err := os.OpenFile(*logpath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
-			log.Fatalf("error opening file: %v", err)
+			log.Fatalf("Error opening file: %v", err)
 		}
 		defer f.Close()
 		log.SetOutput(f)
@@ -124,7 +127,7 @@ func main() {
 	switch *provider {
 	case "local":
 		if *basedir == "" {
-			log.Panic("basedir not set")
+			log.Panic("Error basedir not set.")
 		}
 		storage, err = NewLocalStorage(*basedir)
 	}
