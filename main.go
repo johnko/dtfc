@@ -29,9 +29,11 @@ SOFTWARE.
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"github.com/PuerkitoBio/ghost/handlers"
+	"github.com/golang/groupcache"
 	"github.com/gorilla/mux"
 	"log"
 	"math/rand"
@@ -45,10 +47,11 @@ const SERVER_VERSION = "0.0.1"
 
 // we use these commands to reduce the amount of garbage collection golang needs to do
 const cmdSHASUMFreeBSD = "/usr/local/bin/shasum"
+
 // or on Apple using Macports
 const cmdSHASUMApple = "/opt/local/bin/shasum"
 const cmdSHA512 = "/sbin/sha512"
-const cmdTAIL   = "/usr/bin/tail"
+const cmdTAIL = "/usr/bin/tail"
 
 const timeLayout = "2006-01-02 15:04:05 MST"
 const timeHTTPLayout = "Mon, 2 Jan 2006 15:04:05 MST"
@@ -57,10 +60,12 @@ const timeHTTPLayout = "Mon, 2 Jan 2006 15:04:05 MST"
 const _24K = (1 << 20) * 24
 
 var config struct {
-    ALLOWDELETE        string
-	ALLOWGET           string
-    ALLOWPUT           string
-	Temp               string
+	ALLOWDELETE string
+	ALLOWGET    string
+	ALLOWPUT    string
+	Temp        string
+	ME          string
+	PEERS       []string
 }
 
 var storage Storage
@@ -88,14 +93,16 @@ func main() {
 		log.Panic("Error while looking for tail executable.")
 	}
 
-	port        := flag.String("port", "8080", "port number, default: 8080")
-	temp        := flag.String("temp", config.Temp, "")
-	basedir     := flag.String("basedir", "", "")
-	logpath     := flag.String("log", "", "")
-	provider    := flag.String("provider", "local", "")
-    allowdelete := flag.String("allowdelete", "true", "true or false, default: true")
-    allowget    := flag.String("allowget", "true", "true or false, default: true")
-	allowput    := flag.String("allowput", "true", "true or false, default: true")
+	port := flag.String("port", "8080", "port number, default: 8080")
+	temp := flag.String("temp", config.Temp, "")
+	basedir := flag.String("basedir", "", "")
+	logpath := flag.String("log", "", "")
+	provider := flag.String("provider", "local", "")
+	allowdelete := flag.String("allowdelete", "true", "true or false, default: true")
+	allowget := flag.String("allowget", "true", "true or false, default: true")
+	allowput := flag.String("allowput", "true", "true or false, default: true")
+	me := flag.String("me", "", "")
+	peerlist := flag.String("peerlist", "", "text file with one peer per line")
 
 	flag.Parse()
 
@@ -112,10 +119,15 @@ func main() {
 	config.ALLOWDELETE = *allowdelete
 	config.ALLOWGET = *allowget
 	config.ALLOWPUT = *allowput
+	config.ME = *me
+	config.PEERS, err = readLines(peerlist)
+	if err != nil {
+		log.Panic("Error while reading peerlist.", err)
+	}
 
 	r := mux.NewRouter()
 
-    r.HandleFunc("/health.html", healthHandler).Methods("GET")
+	r.HandleFunc("/health.html", healthHandler).Methods("GET")
 	r.HandleFunc("/{hash}", getHandler).Methods("GET")
 
 	//r.HandleFunc("/{hash}", headHandler).Methods("HEAD")
@@ -136,17 +148,20 @@ func main() {
 	}
 
 	log.Printf("%s/%s server started. listening on port: %v",
-        SERVER_INFO, SERVER_VERSION, *port)
-    log.Printf("using temp folder: %s, using storage provider: %s",
-        config.Temp, *provider)
-    log.Printf("allow delete: %s, allow get: %s, allow put: %s",
-        config.ALLOWDELETE, config.ALLOWGET, config.ALLOWPUT)
+		SERVER_INFO, SERVER_VERSION, *port)
+	log.Printf("using temp folder: %s, using storage provider: %s",
+		config.Temp, *provider)
+	log.Printf("allow delete: %s, allow get: %s, allow put: %s",
+		config.ALLOWDELETE, config.ALLOWGET, config.ALLOWPUT)
 	log.Printf("---------------------------")
 
 	s := &http.Server{
 		Addr:    fmt.Sprintf(":%s", *port),
 		Handler: handlers.PanicHandler(RedirectHandler(handlers.LogHandler(r, handlers.NewLogOptions(log.Printf, "_default_"))), nil),
 	}
+
+	peers := groupcache.NewHTTPPool(config.ME)
+	peers.Set(config.PEERS...)
 
 	log.Panic(s.ListenAndServe())
 	log.Printf("Server stopped.")

@@ -107,7 +107,7 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 			//fmt.Fprintf(w, "https://%s%s/%s/%s\n", ipAddrFromRemoteAddr(r.Host), config.NONROOTPATH, token, filename)
 		} else if err == nil {
 			log.Printf("Hashed %s %s as %s", token, filename, hash)
-			fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\"}",hash,filename)
+			fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\"}", hash, filename)
 		}
 	} else {
 		http.Error(w, "403 Forbidden. Uploading is disabled.", 403)

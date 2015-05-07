@@ -25,9 +25,9 @@ see `load-dependencies.sh`
 - [ ] Integrate groupcache
 - Flags:
   - [x] Listen on IP:PORT
-  - [ ] groupcache IP:PORT
+  - [x] groupcache IP:PORT
   - [x] Storage path
-  - [ ] Peer list (file? dynamic?)
+  - [x] Peer list (file? dynamic?)
   - [ ] filtered replication?
   - [ ] couchdb on localhost? to save map of sha512/filename
 - Permissions:

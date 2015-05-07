@@ -71,9 +71,9 @@ func Sha512(str string, word string) (hash string, err error) {
 	//      return
 	//}
 
-	// TODO: is shasum + awk more universal on *nix systems?
+	// TODO: is shasum more universal on *nix systems?
 	cmd := exec.Command(cmdSHASUM, "-a", "512", str)
-	if (word != "") {
+	if word != "" {
 		cmd.Stdin = strings.NewReader(word)
 	}
 	tmpout, err := cmd.Output()
