@@ -33,7 +33,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/PuerkitoBio/ghost/handlers"
-	"github.com/golang/groupcache"
 	"github.com/gorilla/mux"
 	"log"
 	"math/rand"
@@ -101,7 +100,7 @@ func main() {
 	allowdelete := flag.String("allowdelete", "true", "true or false, default: true")
 	allowget := flag.String("allowget", "true", "true or false, default: true")
 	allowput := flag.String("allowput", "true", "true or false, default: true")
-	me := flag.String("me", "", "")
+	me := flag.String("me", "", "example http://127.0.0.1:8080")
 	peerlist := flag.String("peerlist", "", "text file with one peer per line")
 
 	flag.Parse()
@@ -159,9 +158,6 @@ func main() {
 		Addr:    fmt.Sprintf(":%s", *port),
 		Handler: handlers.PanicHandler(RedirectHandler(handlers.LogHandler(r, handlers.NewLogOptions(log.Printf, "_default_"))), nil),
 	}
-
-	peers := groupcache.NewHTTPPool(config.ME)
-	peers.Set(config.PEERS...)
 
 	log.Panic(s.ListenAndServe())
 	log.Printf("Server stopped.")

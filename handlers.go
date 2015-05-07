@@ -115,15 +115,51 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getHandler(w http.ResponseWriter, r *http.Request) {
+	var filename string
+	var reader io.Reader
+	var modTime Time
+	var err error
 	if config.ALLOWGET == "true" {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
-		filename, reader, _, modTime, err := storage.Seeker(hash)
+		filename, reader, _, modTime, err = storage.Seeker(hash)
 		if err != nil {
 			if strings.Index(err.Error(), "no such file or directory") >= 0 {
 				log.Printf("%s", err.Error())
-				notFoundHandler(w, r)
-				return
+				// try from peer
+				var found = false
+				var file os.File
+				var resp Response
+				for i := range config.PEERS {
+					if (config.PEERS[i] != config.ME) && (found == false) {
+						file, err = ioutil.TempFile(config.Temp, "peer-")
+						if err != nil {
+							log.Printf("%s", err.Error())
+							http.Error(w, "Internal server error.", 500)
+							return
+						}
+						defer file.Close()
+						resp, err = http.Get(config.PEERS[i] + "/" + hash)
+						defer resp.Body.Close()
+						n, err = io.Copy(file, resp.Body)
+						if err != nil {
+							os.Remove(file.Name())
+							log.Printf("%s", err.Error())
+							http.Error(w, "Internal server error.", 500)
+							return
+						}
+						reader, err = os.Open(file.Name())
+						filename, reader, _, modTime, err = storage.Seeker(hash)
+						if err == nil {
+							found = true
+						}
+					}
+				}
+				// end try from peer
+				if found == false {
+					notFoundHandler(w, r)
+					return
+				}
 			} else {
 				log.Printf("%s", err.Error())
 				http.Error(w, "Could not retrieve file.", 500)
