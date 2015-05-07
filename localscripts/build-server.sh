@@ -1,5 +1,5 @@
 #!/bin/sh
 
-export GOPATH=~/opt/go/
+export GOPATH=`pwd`/.godeps
 
 go build -o main *.go
