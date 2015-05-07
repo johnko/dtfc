@@ -22,18 +22,19 @@ see `load-dependencies.sh`
 
 ## THOUGHTS
 
-- [ ] Integrate groupcache
 - Flags:
-  - [x] Listen on IP:PORT
-  - [x] groupcache IP:PORT
-  - [x] Storage path
-  - [x] Peer list (file? dynamic?)
+  - [x] --port PORT
+  - [x] --basedir (Storage path)
+  - [x] --me http://IP:PORT/
+  - [x] --peerlist Peer list (file? dynamic?)
   - [ ] filtered replication?
   - [ ] couchdb on localhost? to save map of sha512/filename
 - Permissions:
-  - [ ] rwx like Unix 777, except it's GET, PUT, DELETE
+  - [x] rwx like Unix 777, except it's GET, PUT, DELETE
   - [ ] if file named "404" exists, return HTTP.404
   - [ ] if file named "403" exists, return HTTP.403
+- Peering:
+  - [ ] better peer picker than sequential text file
 - Throttling:
   - [ ] Firewall max-conn-per-ip?
   - [ ] Token from CouchDB session?
@@ -46,14 +47,14 @@ see `load-dependencies.sh`
 - In Response to:
   - [x] PUT /filename: JSON of sha512 and filename
   - [x] GET /health: 200 OK
-  - [ ] GET /sha512: data
+  - [x] GET /sha512: data
   - [ ] DELETE /sha512: ???
 - Proxy:
   - [ ] NginX for SSL & round robin load balancing
 
 ## HOW
 
-- leverage groupcache, but instead of keeping the file in RAM, save it to local disk.
+- ~~leverage groupcache, but~~ instead of keeping the file in RAM, save it to local disk.
 - client requests a file from this node, if this node doesn't have it on disk, ask peers for it, serve it and save it to local disk.
 
 ## SECURITY
