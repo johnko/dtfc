@@ -1,4 +1,4 @@
-# dtfc
+# dtfc (aka groupstore: a slow, persistent, alternative to groupcache)
 DisTributed File Collection (because it's not great for CouchDB to store all doc.attachments in a single db file)
 
 In CouchDB, all doc.attachments from a database were basically being concatenated into the single backend db file.
