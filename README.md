@@ -11,7 +11,7 @@ I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachme
 
 ## BUILD DEPENDENCIES
 
-see `load-dependencies.sh`
+see `scripts/load-dependencies.sh`
 
 ## RUN DEPENDENCIES
 
@@ -34,7 +34,9 @@ see `load-dependencies.sh`
   - [ ] if file named "404" exists, return HTTP.404
   - [ ] if file named "403" exists, return HTTP.403
 - Peering:
-  - [ ] better peer picker than sequential text file
+  - [ ] better peer picker than sequential
+- Uploading:
+  - [ ] PUT to second peer to avoid SPOF?
 - Throttling:
   - [ ] Firewall max-conn-per-ip?
   - [ ] Token from CouchDB session?
@@ -54,7 +56,8 @@ see `load-dependencies.sh`
 
 ## HOW
 
-- ~~leverage groupcache, but~~ instead of keeping the file in RAM, save it to local disk.
+- ~~leverage groupcache, but~~
+- instead of keeping the file in RAM, save it to local disk.
 - client requests a file from this node, if this node doesn't have it on disk, ask peers for it, serve it and save it to local disk.
 
 ## SECURITY
@@ -62,7 +65,8 @@ see `load-dependencies.sh`
 - do not run as root, create a non-priviledged user
 - use a rate limiting firewall
 - [ ] figure out how to do authentication/authorization
-- groupcache uses HTTP, you should only communicate with peers over a secure channel, and segregate this HTTP traffic from other internal network traffic.
+- ~~groupcache uses HTTP, you should only communicate with peers over a secure channel, and~~
+- segregate this HTTP traffic from other internal network traffic.
 
 ## INSPIRATION FROM
 
