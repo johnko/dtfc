@@ -132,7 +132,7 @@ func main() {
 			config.ME = arraystring[0]
 		}
 	}
-	if config.ME == "" {
+	if strings.Trim(config.ME, " ") == "" {
 		log.Panic("Error while trying to figure out me.")
 	}
 	log.Printf("config.ME: %s", config.ME)
