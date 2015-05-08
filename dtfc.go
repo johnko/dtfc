@@ -35,14 +35,14 @@ import (
 	"time"
 )
 
-func getFromPeers(hash string) (found bool, filename string, reader io.ReadSeeker, contentLength uint64, modTime time.Time, err error) {
+func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSeeker, contentLength uint64, modTime time.Time, err error) {
     var file *os.File
     var resp *http.Response
     fnre := regexp.MustCompile("filename=\".*\"")
     found = false
     for i := range config.PEERS {
         if (config.PEERS[i] != config.ME) && (found == false) {
-            var url = config.PEERS[i] + hash
+            var url = config.PEERS[i] + oldhash
             log.Printf("trying to get from peer %s", url)
             file, err = ioutil.TempFile(config.Temp, "peer-")
             if err != nil {
@@ -76,11 +76,13 @@ func getFromPeers(hash string) (found bool, filename string, reader io.ReadSeeke
                     if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
                         log.Printf("%s", err.Error())
                     } else if err == nil {
-                        filename, reader, _, modTime, err = storage.Seeker(hash)
-                        if err == nil {
-                            found = true
-                            return
-                        }
+						if oldhash == hash {
+	                        filename, reader, _, modTime, err = storage.Seeker(hash)
+	                        if err == nil {
+	                            found = true
+	                            return
+	                        }
+						}
                     }
                 }
             }
