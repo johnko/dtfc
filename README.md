@@ -69,6 +69,19 @@ see `scripts/load-dependencies.sh`
 - ~~groupcache uses HTTP, you should only communicate with peers over a secure channel, and~~
 - segregate this HTTP traffic from other internal network traffic, or use SSL.
 
+## WITH COUCHDB
+
+```
+doc.dtfc {
+    "filename1.jpg": {
+        "sha512": "0000000000..."
+    },
+    "filename2.mp3": {
+        "sha512": "1111111111..."
+    }
+}
+```
+
 ## INSPIRATION FROM
 
 - Apache [CouchDB](http://couchdb.apache.org/)
