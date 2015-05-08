@@ -30,63 +30,67 @@ import (
 	"log"
 	"net/http"
 	"os"
-    "regexp"
+	"regexp"
 	"strings"
 	"time"
 )
 
 func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSeeker, contentLength uint64, modTime time.Time, err error) {
-    var file *os.File
-    var resp *http.Response
-    fnre := regexp.MustCompile("filename=\".*\"")
-    found = false
-    for i := range config.PEERS {
-        if (config.PEERS[i] != config.ME) && (found == false) {
-            var url = config.PEERS[i] + oldhash
-            log.Printf("trying to get from peer %s", url)
-            file, err = ioutil.TempFile(config.Temp, "peer-")
-            if err != nil {
-                log.Printf("%s", err.Error())
-                return
-            }
-            defer file.Close()
-            resp, err = http.Get(url)
-            if err == nil {
-                if resp.StatusCode == 200 {
-                    if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
-                        filename = strings.Replace(
-                            strings.Replace(
-                                fnre.FindString(
-                                    resp.Header.Get("Content-Disposition")),
-                                "filename=",
-                                "",
-                                -1),
-                            "\"",
-                            "",
-                            -1)
-                    }
-                    defer resp.Body.Close()
-                    _, err = io.Copy(file, resp.Body)
-                    if err != nil {
-                        os.Remove(file.Name())
-                        log.Printf("%s", err.Error())
-                        return
-                    }
-                    var hash string
-                    if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
-                        log.Printf("%s", err.Error())
-                    } else if err == nil {
+	var file *os.File
+	var resp *http.Response
+	fnre := regexp.MustCompile("filename=\".*\"")
+	found = false
+	for i := range config.PEERS {
+		if (config.PEERS[i] != config.ME) && (found == false) {
+			var url = config.PEERS[i] + oldhash
+			log.Printf("trying to get from peer %s", url)
+			file, err = ioutil.TempFile(config.Temp, "peer-")
+			if err != nil {
+				log.Printf("%s", err.Error())
+				return
+			}
+			defer file.Close()
+			resp, err = http.Get(url)
+			if err == nil {
+				if resp.StatusCode == 200 {
+					// get filename
+					if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
+						filename = strings.Replace(
+							strings.Replace(
+								fnre.FindString(
+									resp.Header.Get("Content-Disposition")),
+								"filename=",
+								"",
+								-1),
+							"\"",
+							"",
+							-1)
+					}
+					defer resp.Body.Close()
+					// save file
+					_, err = io.Copy(file, resp.Body)
+					if err != nil {
+						os.Remove(file.Name())
+						log.Printf("%s", err.Error())
+						return
+					}
+					// go through hash and hardlink process
+					var hash string
+					if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
+						log.Printf("%s", err.Error())
+					} else if err == nil {
+						// compare oldhash to newhash so we are returning the right data and peer is not corrupt
 						if oldhash == hash {
-	                        filename, reader, _, modTime, err = storage.Seeker(hash)
-	                        if err == nil {
-	                            found = true
-	                            return
-	                        }
+							filename, reader, _, modTime, err = storage.Seeker(hash)
+							if err == nil {
+								found = true
+								return
+							}
 						}
-                    }
-                }
-            }
-        }
-    }
-    return
+					}
+				}
+			}
+		}
+	}
+	return
 }
