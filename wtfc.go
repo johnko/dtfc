@@ -118,33 +118,8 @@ func (s *LocalStorage) HardLinkSha512Path(oldpath string, filename string) (hash
 }
 
 func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash string, err error) {
-	oldpath := filepath.Join(config.Temp, token)
-	if _, err = os.Lstat(filepath.Join(oldpath, filename)); err != nil {
-		return
-	}
-	hash, err = Sha512(filepath.Join(oldpath, filename), "")
-	if err != nil {
-		return
-	}
-	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash))
-	// mkdir -p
-	if err = os.MkdirAll(newpath, 0700); err != nil && !os.IsExist(err) {
-		return
-	}
-	// Link the oldtoken/filename to sha512/data
-	if err = os.Link(filepath.Join(oldpath, filename), filepath.Join(newpath, "data")); err != nil {
-		if strings.Index(err.Error(), "file exists") >= 0 {
-			// If the file exists at sha512/data, then delete oldtoken/filename, and link sha512/data to oldtoken/filename
-			//os.Remove(filepath.Join(oldpath, filename))
-			//os.Link(filepath.Join(newpath, "data"), filepath.Join(oldpath, filename))
-			err = nil
-		}
-	}
-	var f1 io.WriteCloser
-	f1, err = os.OpenFile(filepath.Join(newpath, "filename"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
-	defer f1.Close()
-	io.Copy(f1, strings.NewReader(fmt.Sprintf("%s\n", filename)))
-	storage.DeleteFile(token, filename)
+	oldpath := filepath.Join(config.Temp, token, filename)
+	hash, err = storage.HardLinkSha512Path(oldpath, filename)
 	return
 }
 
