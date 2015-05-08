@@ -27,6 +27,7 @@ see `scripts/load-dependencies.sh`
   - [x] --port PORT
   - [x] --basedir (Storage path)
   - [x] --me http://IP:PORT/
+  - [x] --melist as the first line of file
   - [x] --peerlist Peer list (file? dynamic?)
   - [ ] filtered replication?
   - [ ] couchdb on localhost? to save map of sha512/filename

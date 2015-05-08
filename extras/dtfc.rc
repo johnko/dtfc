@@ -16,6 +16,8 @@ stop_cmd="my_stop"
 mylog="/var/log/${name}.log"
 MYBASE="/usr/home/${MYUSER}/base"
 mytmp="/usr/home/${MYUSER}/tmp"
+MYPEERLIST="/usr/home/${MYUSER}/peerlist.txt"
+mymelist="/usr/home/${MYUSER}/melist.txt"
 my_start()
 {
     # test variables in this function before using them
@@ -73,6 +75,8 @@ my_start()
             --allowdelete        ${ALLOWDELETE} \
             --allowget           ${ALLOWGET} \
             --allowput           ${ALLOWPUT} \
+            --melist             ${mymelist} \
+            --peerlist           ${MYPEERLIST} \
             --log                ${mylog} &
 }
 my_stop()

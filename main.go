@@ -99,7 +99,8 @@ func main() {
 	allowdelete := flag.String("allowdelete", "true", "true or false, default: true")
 	allowget := flag.String("allowget", "true", "true or false, default: true")
 	allowput := flag.String("allowput", "true", "true or false, default: true")
-	me := flag.String("me", "", "example http://127.0.0.1:8080")
+	me := flag.String("me", "", "example http://127.0.0.1:8080/")
+	melist := flag.String("melist", "", "text file with first line as me")
 	peerlist := flag.String("peerlist", "", "text file with one peer per line")
 
 	flag.Parse()
@@ -117,7 +118,16 @@ func main() {
 	config.ALLOWDELETE = *allowdelete
 	config.ALLOWGET = *allowget
 	config.ALLOWPUT = *allowput
-	config.ME = *me
+	if me != "" {
+		config.ME = *me
+	} else if melist != "" {
+		config.ME, err = readLines(*melist)[0]
+		if err != nil {
+			log.Panic("Error while reading melist.", err)
+		}
+	} else {
+		log.Panic("Error while trying to figure out me.")
+	}
 	config.PEERS, err = readLines(*peerlist)
 	if err != nil {
 		log.Panic("Error while reading peerlist.", err)
