@@ -57,6 +57,22 @@ my_start()
         echo "Variable ALLOWGET undefined in $0" >&2
         exit 1
     fi
+    if     [ "x" = "x${MYPEERLIST}" ]; then
+        echo "Variable MYPEERLIST undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${mymelist}" ]; then
+        echo "Variable mymelist undefined in $0" >&2
+        exit 1
+    fi
+    if [                    ! -e "${MYPEERLIST}" ]; then
+        echo "Missing config file ${MYPEERLIST}" >&2
+        exit 1
+    fi
+    if [                    ! -e "${mymelist}" ]; then
+        echo "Missing config file ${mymelist}" >&2
+        exit 1
+    fi
     # create log
     touch ${mylog} && chown ${MYUSER} \
           ${mylog}

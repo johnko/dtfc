@@ -67,12 +67,12 @@ see `scripts/load-dependencies.sh`
 - do not run as root, create a non-priviledged user
 - use a rate limiting firewall
 - ~~groupcache uses HTTP, you should only communicate with peers over a secure channel, and~~
-- segregate this HTTP traffic from other internal network traffic.
+- segregate this HTTP traffic from other internal network traffic, or use SSL.
 
 ## INSPIRATION FROM
 
 - Apache [CouchDB](http://couchdb.apache.org/)
-- my experience customizing [transfer.sh](https://transfer.sh/) into [wtfc](https://github.com/johnko/wtfc/)
+- customizing [transfer.sh](https://transfer.sh/) into [wtfc](https://github.com/johnko/wtfc/)
 - [groupcache](https://github.com/golang/groupcache)
 - Trying to find an easier way than Amazon S3, Riak, RiakCS, GridFS, etc.
 
