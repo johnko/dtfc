@@ -122,7 +122,8 @@ func main() {
 	// the following test can be nil because *string can be nil
 	if me != nil {
 		config.ME = *me
-	} else if melist != nil {
+	}
+	if (config.ME == "") && (melist != nil) {
 		var arraystring []string
 		arraystring, err = readLines(*melist)
 		if err != nil {
@@ -130,7 +131,8 @@ func main() {
 		} else {
 			config.ME = arraystring[0]
 		}
-	} else {
+	}
+	if config.ME == "" {
 		log.Panic("Error while trying to figure out me.")
 	}
 	log.Printf("config.ME: %s", config.ME)
