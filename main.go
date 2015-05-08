@@ -133,6 +133,7 @@ func main() {
 	} else {
 		log.Panic("Error while trying to figure out me.")
 	}
+	log.Printf("config.ME: %s", config.ME)
 	config.PEERS, err = readLines(*peerlist)
 	if err != nil {
 		log.Panic("Error while reading peerlist.", err)
