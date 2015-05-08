@@ -13,6 +13,9 @@ exiterror() {
     if [ "0" != "${exitcode}" ]; then
         echo "ERROR: ${@}" >&2
     fi
+    kill `cat ${PIDFILE}1`
+    kill `cat ${PIDFILE}2`
+    kill `cat ${PIDFILE}3`
     exit ${exitcode}
 }
 
@@ -41,12 +44,6 @@ curl -s -v -X PUT --data-binary @LICENSE http://${LOCALHOST}:8001/license.txt 2>
 
 curl -s -v -X GET http://${LOCALHOST}:8002/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
-kill `cat ${PIDFILE}1`
-
 curl -s -v -X GET http://${LOCALHOST}:8003/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
-kill `cat ${PIDFILE}2`
-
 curl -s -v -X GET http://${LOCALHOST}:8003/404 2>&1 | grep '404 Not Found\.' || exiterror 1 "This is supposed to 404"
-
-kill `cat ${PIDFILE}3`
