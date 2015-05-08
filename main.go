@@ -118,12 +118,17 @@ func main() {
 	config.ALLOWDELETE = *allowdelete
 	config.ALLOWGET = *allowget
 	config.ALLOWPUT = *allowput
-	if me != "" {
+	// usually string empty test is == ""
+	// the following test can be nil because *string can be nil
+	if me != nil {
 		config.ME = *me
-	} else if melist != "" {
-		config.ME, err = readLines(*melist)[0]
+	} else if melist != nil {
+		var arraystring []string
+		arraystring, err = readLines(*melist)
 		if err != nil {
 			log.Panic("Error while reading melist.", err)
+		} else {
+			config.ME = arraystring[0]
 		}
 	} else {
 		log.Panic("Error while trying to figure out me.")
