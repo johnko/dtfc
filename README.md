@@ -56,7 +56,7 @@ see `scripts/load-dependencies.sh`
   - [x] PUT /filename: JSON of sha512 and filename
   - [x] GET /health: 200 OK
   - [x] GET /sha512: data
-  - [ ] DELETE /sha512: ???
+  - [ ] DELETE /sha512: ??? may have problems if a node was offline while DELETE command was sent?
 - Security:
   - [ ] figure out how to do authentication/authorization
 - Proxy:
