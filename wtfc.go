@@ -27,7 +27,10 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io"
+	//"mime"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -35,6 +38,29 @@ import (
 	"strings"
 	"time"
 )
+
+func headHandler(w http.ResponseWriter, r *http.Request) {
+	// force close because curl tries to keep open
+	w.Header().Set("Connection", "close")
+	if config.ALLOWGET == "true" {
+		vars := mux.Vars(r)
+		hash := vars["hash"]
+		_, _, _, err := storage.Head(hash)
+		//filename, contentLength, _, err := storage.Head(hash)
+		//contentType := mime.TypeByExtension(filepath.Ext(filename))
+		if err != nil {
+			// we only care about the status code
+			w.WriteHeader(404)
+			return
+		} else {
+			// you may want the json?
+			//fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\",\"length\":%d,\"content_type\":\"%s\",\"stub\":true}", hash, filename, contentLength, strings.Split(contentType, ";")[0])
+		}
+	} else {
+		// we only care about the status code
+		w.WriteHeader(403)
+	}
+}
 
 func SplitHashToPairSlash(token string) string {
 	// split hash to pairs because a folder of 400+ items is slow

@@ -59,4 +59,8 @@ curl -s -v -X GET http://${LOCALHOST}:8005/${LICENSEHASH} 2>&1 | grep 'The MIT L
 
 curl -s -v -X GET http://${LOCALHOST}:8005/404 2>&1 | grep '404 Not Found\.' || exiterror 1 "This is supposed to 404"
 
+curl -s -v -X HEAD http://${LOCALHOST}:8005/${LICENSEHASH}
+
+curl -s -v -X HEAD http://${LOCALHOST}:8005/404
+
 exiterror 0

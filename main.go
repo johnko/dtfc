@@ -155,7 +155,7 @@ func main() {
 	r.HandleFunc("/health.html", healthHandler).Methods("GET")
 	r.HandleFunc("/{hash}", getHandler).Methods("GET")
 
-	//r.HandleFunc("/{hash}", headHandler).Methods("HEAD")
+	r.HandleFunc("/{hash}", headHandler).Methods("HEAD")
 
 	r.HandleFunc("/{filename}", putHandler).Methods("PUT")
 

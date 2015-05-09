@@ -43,4 +43,9 @@ echo "---------------------------"
 sleep 1
 curl -v -X GET http://${LOCALHOST}:${LOCALPORT}/${LICENSEHASH} || exiterror 1 "couldn't GET license.txt"
 
+echo "---------------------------"
+
+sleep 1
+curl -v -X HEAD http://${LOCALHOST}:${LOCALPORT}/${LICENSEHASH}
+
 kill ${TESTPID}
