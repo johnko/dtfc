@@ -59,12 +59,14 @@ const timeHTTPLayout = "Mon, 2 Jan 2006 15:04:05 MST"
 const _24K = (1 << 20) * 24
 
 var config struct {
-	ALLOWDELETE string
-	ALLOWGET    string
-	ALLOWPUT    string
-	Temp        string
-	ME          string
-	PEERS       []string
+	ALLOWDELETE  string
+	ALLOWGET     string
+	ALLOWPUT     string
+	Temp         string
+	ME           string
+	PEERS        []string
+	PEERLIST     string
+	PEERLISTHASH string
 }
 
 var storage Storage
@@ -119,6 +121,7 @@ func main() {
 	config.ALLOWDELETE = *allowdelete
 	config.ALLOWGET = *allowget
 	config.ALLOWPUT = *allowput
+	config.PEERLIST = *peerlist
 	// usually string empty test is == ""
 	// the following test can be nil because *string can be nil
 	if me != nil {
@@ -137,9 +140,13 @@ func main() {
 		log.Panic("Error while trying to figure out me.")
 	}
 	log.Printf("config.ME: %s", config.ME)
-	config.PEERS, err = readLines(*peerlist)
+	config.PEERS, err = readLines(config.PEERLIST)
 	if err != nil {
 		log.Panic("Error while reading peerlist.", err)
+	}
+	config.PEERLISTHASH, err = Sha512(config.PEERLIST, "")
+	if err != nil {
+		log.Panic("Error while hashing peerlist.", err)
 	}
 
 	r := mux.NewRouter()

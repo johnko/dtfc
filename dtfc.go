@@ -35,6 +35,23 @@ import (
 	"time"
 )
 
+func refreshPeerList() error {
+	newhash, err := Sha512(config.PEERLIST, "")
+	if err != nil {
+		log.Printf("Error while hashing peerlist. %s", err.Error())
+	} else {
+		if config.PEERLISTHASH != newhash {
+			config.PEERS, err = readLines(config.PEERLIST)
+			if err != nil {
+				log.Printf("Error while reading peerlist. %s", err.Error())
+			} else {
+				config.PEERLISTHASH = newhash
+			}
+		}
+	}
+	return err
+}
+
 func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSeeker, contentLength uint64, modTime time.Time, err error) {
 	var file *os.File
 	var resp *http.Response

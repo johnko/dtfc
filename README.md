@@ -37,6 +37,7 @@ see `scripts/load-dependencies.sh`
   - [ ] if file named "403" exists, return HTTP.403
 - Peering:
   - [x] sequential
+  - [x] set peers without restarting the program by rereading the peerlist?
   - [ ] better peer picker than sequential
 - Uploading:
   - [ ] PUT to another peer during first upload to avoid SPOF?
