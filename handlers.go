@@ -29,8 +29,6 @@ SOFTWARE.
 package main
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/kennygrant/sanitize"
@@ -58,56 +56,30 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 	if config.ALLOWPUT == "true" {
 		vars := mux.Vars(r)
 		filename := sanitize.Path(filepath.Base(vars["filename"]))
-		contentLength := r.ContentLength
-		var reader io.Reader
 		var err error
-		reader = r.Body
-		if contentLength == -1 {
-			// queue file to disk, because s3 needs content length
-			var f io.Reader
-			f = reader
-			var b bytes.Buffer
-			n, err := io.CopyN(&b, f, _24K+1)
-			if err != nil && err != io.EOF {
+		file, err := ioutil.TempFile(config.Temp, "transfer-")
+		if err != nil {
+			log.Printf("%s", err.Error())
+			http.Error(w, "Internal server error.", 500)
+			return
+		} else {
+			defer file.Close()
+			_, err = io.Copy(file, r.Body)
+			if err != nil {
+				os.Remove(file.Name())
 				log.Printf("%s", err.Error())
 				http.Error(w, "Internal server error.", 500)
 				return
-			}
-			if n > _24K {
-				file, err := ioutil.TempFile(config.Temp, "transfer-")
-				if err != nil {
-					log.Printf("%s", err.Error())
-					http.Error(w, "Internal server error.", 500)
-					return
-				}
-				defer file.Close()
-				n, err = io.Copy(file, io.MultiReader(&b, f))
-				if err != nil {
-					os.Remove(file.Name())
-					log.Printf("%s", err.Error())
-					http.Error(w, "Internal server error.", 500)
-					return
-				}
-				reader, err = os.Open(file.Name())
 			} else {
-				reader = bytes.NewReader(b.Bytes())
+				w.Header().Set("Content-Type", "text/plain")
+				var hash string
+				if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
+					log.Printf("%s", err.Error())
+				} else if err == nil {
+					log.Printf("Hashed %s as %s", filename, hash)
+					fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\"}", hash, filename)
+				}
 			}
-			contentLength = n
-		}
-		token := Encode(10000000 + int64(rand.Intn(1000000000)))
-		log.Printf("Uploading %s %s %d", token, filename, contentLength)
-		if err = storage.Put(token, filename, reader, uint64(contentLength)); err != nil {
-			log.Printf("%s", err.Error())
-			http.Error(w, errors.New("Could not save file").Error(), 500)
-			return
-		}
-		w.Header().Set("Content-Type", "text/plain")
-		var hash string
-		if hash, err = storage.HardLinkSha512(token, filename); err != nil {
-			log.Printf("%s", err.Error())
-		} else if err == nil {
-			log.Printf("Hashed %s %s as %s", token, filename, hash)
-			fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\"}", hash, filename)
 		}
 	} else {
 		http.Error(w, "403 Forbidden. Uploading is disabled.", 403)
