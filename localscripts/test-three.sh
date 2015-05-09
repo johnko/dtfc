@@ -7,6 +7,8 @@ TEMPDIR="${HOME}/z/test-three-tmp"
 LOGFILE="${HOME}/z/test-three-log"
 PIDFILE="${HOME}/z/test-three-pid"
 
+LICENSEHASH=`openssl dgst -sha512 LICENSE | awk '{print $NF}'`
+
 exiterror() {
     exitcode=$1
     shift
@@ -40,11 +42,11 @@ launchenv 2
 launchenv 3
 
 
-curl -s -v -X PUT --data-binary @LICENSE http://${LOCALHOST}:8001/license.txt 2>&1 | grep '13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8' || exiterror 1 "couldn't PUT license.txt"
+curl -s -v -X PUT --data-binary @LICENSE http://${LOCALHOST}:8001/license.txt 2>&1 | grep ${LICENSEHASH} || exiterror 1 "couldn't PUT license.txt"
 
-curl -s -v -X GET http://${LOCALHOST}:8002/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
+curl -s -v -X GET http://${LOCALHOST}:8002/${LICENSEHASH} 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
-curl -s -v -X GET http://${LOCALHOST}:8003/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
+curl -s -v -X GET http://${LOCALHOST}:8003/${LICENSEHASH} 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
 curl -s -v -X GET http://${LOCALHOST}:8003/404 2>&1 | grep '404 Not Found\.' || exiterror 1 "This is supposed to 404"
 

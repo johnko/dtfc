@@ -90,10 +90,12 @@ func Sha512Word(word string) (hash string, err error) {
 	return
 }
 
-func (s *LocalStorage) HardLinkSha512Path(oldpath string, filename string) (hash string, err error) {
-	if _, err = os.Lstat(oldpath); err != nil {
+func (s *LocalStorage) HardLinkSha512Path(oldpath string, filename string) (hash string, contentLength uint64, err error) {
+	var fi os.FileInfo
+	if fi, err = os.Lstat(oldpath); err != nil {
 		return
 	}
+	contentLength = uint64(fi.Size())
 	hash, err = Sha512(oldpath, "")
 	if err != nil {
 		return
@@ -117,9 +119,9 @@ func (s *LocalStorage) HardLinkSha512Path(oldpath string, filename string) (hash
 	return
 }
 
-func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash string, err error) {
+func (s *LocalStorage) HardLinkSha512(token string, filename string) (hash string, contentLength uint64, err error) {
 	oldpath := filepath.Join(config.Temp, token, filename)
-	hash, err = storage.HardLinkSha512Path(oldpath, filename)
+	hash, contentLength, err = storage.HardLinkSha512Path(oldpath, filename)
 	return
 }
 

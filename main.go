@@ -144,6 +144,7 @@ func main() {
 	if err != nil {
 		log.Panic("Error while reading peerlist.", err)
 	}
+	log.Printf("config.PEERS: %s", config.PEERS)
 	config.PEERLISTHASH, err = Sha512(config.PEERLIST, "")
 	if err != nil {
 		log.Panic("Error while hashing peerlist.", err)

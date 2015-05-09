@@ -7,6 +7,8 @@ BASEDIR="${HOME}/z/test-one-base"
 TEMPDIR="${HOME}/z/test-one-tmp"
 LOGFILE="${HOME}/z/test-one.log"
 
+LICENSEHASH=`openssl dgst -sha512 LICENSE | awk '{print $NF}'`
+
 exiterror() {
     exitcode=$1
     shift
@@ -39,6 +41,6 @@ curl -v -X PUT --data-binary @LICENSE http://${LOCALHOST}:${LOCALPORT}/license.t
 echo "---------------------------"
 
 sleep 1
-curl -v -X GET http://${LOCALHOST}:${LOCALPORT}/13377b3886e4f6fa1db0610fe4983f3bfa8fa0e7ab3b7179687a7d3ad1f60317a5951f4c4accf6596244531b8f7c4967480b04366925a0eac915697c3daecaf8 || exiterror 1 "couldn't GET license.txt"
+curl -v -X GET http://${LOCALHOST}:${LOCALPORT}/${LICENSEHASH} || exiterror 1 "couldn't GET license.txt"
 
 kill ${TESTPID}

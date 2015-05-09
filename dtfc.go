@@ -45,6 +45,7 @@ func refreshPeerList() error {
 			if err != nil {
 				log.Printf("Error while reading peerlist. %s", err.Error())
 			} else {
+				log.Printf("config.PEERS: %s", config.PEERS)
 				config.PEERLISTHASH = newhash
 			}
 		}
@@ -69,9 +70,9 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 			} else {
 				defer file.Close()
 				req, err = http.NewRequest("GET", url, nil)
-		        if err != nil {
+				if err != nil {
 					log.Printf("%s", err.Error())
-		        } else {
+				} else {
 					// set user agent
 					req.Header.Set("User-Agent", SERVER_INFO+"/"+SERVER_VERSION)
 					resp, err = client.Do(req)
@@ -99,7 +100,7 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 							} else {
 								// go through hash and hardlink process
 								var hash string
-								if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
+								if hash, _, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
 									log.Printf("%s", err.Error())
 								} else if err == nil {
 									// compare oldhash to newhash so we are returning the right data and peer is not corrupt

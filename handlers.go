@@ -36,6 +36,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -54,9 +55,14 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 func putHandler(w http.ResponseWriter, r *http.Request) {
 	if config.ALLOWPUT == "true" {
+		var contentLength uint64
+		var err error
 		vars := mux.Vars(r)
 		filename := sanitize.Path(filepath.Base(vars["filename"]))
-		var err error
+		contentType := mime.TypeByExtension(filepath.Ext(filename))
+		if contentType == "" {
+			contentType = "application/octet-stream"
+		}
 		file, err := ioutil.TempFile(config.Temp, "transfer-")
 		if err != nil {
 			log.Printf("%s", err.Error())
@@ -73,11 +79,11 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				w.Header().Set("Content-Type", "text/plain")
 				var hash string
-				if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
+				if hash, contentLength, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
 					log.Printf("%s", err.Error())
 				} else if err == nil {
 					log.Printf("Hashed %s as %s", filename, hash)
-					fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\"}", hash, filename)
+					fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\",\"length\":%d,\"content_type\":\"%s\",\"stub\":true}", hash, filename, contentLength, strings.Split(contentType,";")[0])
 				}
 			}
 		}
