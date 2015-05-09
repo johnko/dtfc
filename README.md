@@ -40,7 +40,7 @@ see `scripts/load-dependencies.sh`
   - [x] set peers without restarting the program by rereading the peerlist?
   - [ ] better peer picker than sequential
 - Uploading:
-  - [ ] PUT to another peer during first upload to avoid SPOF?
+  - [ ] PUT to another peer during first upload to avoid SPOF? but only if HEAD responds 404
 - Throttling:
   - [ ] if not tracked by CouchDB, purge to prevent spam?
   - [ ] Firewall max-conn-per-ip?
