@@ -54,9 +54,11 @@ func refreshPeerList() error {
 
 func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSeeker, contentLength uint64, modTime time.Time, err error) {
 	var file *os.File
+	var req *http.Request
 	var resp *http.Response
 	fnre := regexp.MustCompile("filename=\".*\"")
 	found = false
+	client := &http.Client{}
 	for i := range config.PEERS {
 		if (config.PEERS[i] != config.ME) && (found == false) {
 			var url = config.PEERS[i] + oldhash
@@ -66,40 +68,47 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 				log.Printf("%s", err.Error())
 			} else {
 				defer file.Close()
-				resp, err = http.Get(url)
-				if err == nil {
-					if resp.StatusCode == 200 {
-						// get filename
-						if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
-							filename = strings.Replace(
-								strings.Replace(
-									fnre.FindString(
-										resp.Header.Get("Content-Disposition")),
-									"filename=",
+				req, err = http.NewRequest("GET", url, nil)
+		        if err != nil {
+					log.Printf("%s", err.Error())
+		        } else {
+					// set user agent
+					req.Header.Set("User-Agent", SERVER_INFO+"/"+SERVER_VERSION)
+					resp, err = client.Do(req)
+					if err == nil {
+						if resp.StatusCode == 200 {
+							// get filename
+							if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
+								filename = strings.Replace(
+									strings.Replace(
+										fnre.FindString(
+											resp.Header.Get("Content-Disposition")),
+										"filename=",
+										"",
+										-1),
+									"\"",
 									"",
-									-1),
-								"\"",
-								"",
-								-1)
-						}
-						defer resp.Body.Close()
-						// save file
-						_, err = io.Copy(file, resp.Body)
-						if err != nil {
-							os.Remove(file.Name())
-							log.Printf("%s", err.Error())
-						} else {
-							// go through hash and hardlink process
-							var hash string
-							if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
+									-1)
+							}
+							defer resp.Body.Close()
+							// save file
+							_, err = io.Copy(file, resp.Body)
+							if err != nil {
+								os.Remove(file.Name())
 								log.Printf("%s", err.Error())
-							} else if err == nil {
-								// compare oldhash to newhash so we are returning the right data and peer is not corrupt
-								if oldhash == hash {
-									filename, reader, _, modTime, err = storage.Seeker(hash)
-									if err == nil {
-										found = true
-										return
+							} else {
+								// go through hash and hardlink process
+								var hash string
+								if hash, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
+									log.Printf("%s", err.Error())
+								} else if err == nil {
+									// compare oldhash to newhash so we are returning the right data and peer is not corrupt
+									if oldhash == hash {
+										filename, reader, _, modTime, err = storage.Seeker(hash)
+										if err == nil {
+											found = true
+											return
+										}
 									}
 								}
 							}

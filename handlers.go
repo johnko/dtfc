@@ -91,7 +91,8 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var reader io.ReadSeeker
 	var modTime time.Time
 	var err error
-	gouseragent := regexp.MustCompile("Go.*package http")
+	// look for custom user agent
+	gouseragent := regexp.MustCompile("dtfc/.*")
 	if config.ALLOWGET == "true" {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
