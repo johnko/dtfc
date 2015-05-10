@@ -36,6 +36,7 @@ import (
 )
 
 func fileNotExists(str string) bool {
+	var err error
 	if _, err = os.Lstat(config.DENY+str); err != nil {
 		// denyput not found, so allowed = true
 		return true
