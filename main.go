@@ -42,7 +42,7 @@ import (
 )
 
 const SERVER_INFO = "dtfc"
-const SERVER_VERSION = "0.0.1"
+const SERVER_VERSION = "0.0.2"
 
 // we use these commands to reduce the amount of garbage collection golang needs to do
 const cmdSHASUMFreeBSD = "/usr/local/bin/shasum"
@@ -59,9 +59,7 @@ const timeHTTPLayout = "Mon, 2 Jan 2006 15:04:05 MST"
 const _24K = (1 << 20) * 24
 
 var config struct {
-	ALLOWDELETE  string
-	ALLOWGET     string
-	ALLOWPUT     string
+	DENY  string
 	Temp         string
 	ME           string
 	PEERS        []string
@@ -99,9 +97,7 @@ func main() {
 	basedir := flag.String("basedir", "", "")
 	logpath := flag.String("log", "", "")
 	provider := flag.String("provider", "local", "")
-	allowdelete := flag.String("allowdelete", "true", "true or false, default: true")
-	allowget := flag.String("allowget", "true", "true or false, default: true")
-	allowput := flag.String("allowput", "true", "true or false, default: true")
+	deny := flag.String("deny", "", "path to deny files")
 	me := flag.String("me", "", "example http://127.0.0.1:8080/")
 	melist := flag.String("melist", "", "text file with first line as me")
 	peerlist := flag.String("peerlist", "", "text file with one peer per line")
@@ -118,9 +114,7 @@ func main() {
 	}
 
 	config.Temp = *temp
-	config.ALLOWDELETE = *allowdelete
-	config.ALLOWGET = *allowget
-	config.ALLOWPUT = *allowput
+	config.DENY = *deny
 	config.PEERLIST = *peerlist
 	// usually string empty test is == ""
 	// the following test can be nil because *string can be nil
@@ -176,8 +170,6 @@ func main() {
 		SERVER_INFO, SERVER_VERSION, *port)
 	log.Printf("using temp folder: %s, using storage provider: %s",
 		config.Temp, *provider)
-	log.Printf("allow delete: %s, allow get: %s, allow put: %s",
-		config.ALLOWDELETE, config.ALLOWGET, config.ALLOWPUT)
 	log.Printf("---------------------------")
 
 	s := &http.Server{

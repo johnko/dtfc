@@ -32,9 +32,9 @@ see `scripts/load-dependencies.sh`
   - [ ] filtered replication?
   - [ ] couchdb on localhost? to save map of sha512/filename
 - Permissions:
-  - [x] rwx like Unix 777, except it's GET, PUT, DELETE
-  - [ ] if file named "404" exists, return HTTP.404
-  - [ ] if file named "403" exists, return HTTP.403
+  - [x] rwx like Unix 777, except it's GET, PUT, DELETE (to deny, set denyput or denyget ...)
+  - [ ] per hash, if file named "404" exists, return HTTP.404
+  - [ ] per hash, if file named "403" exists, return HTTP.403
 - Peering:
   - [x] sequential
   - [x] set peers without restarting the program by rereading the peerlist?

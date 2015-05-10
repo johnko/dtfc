@@ -54,7 +54,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func putHandler(w http.ResponseWriter, r *http.Request) {
-	if config.ALLOWPUT == "true" {
+	if allowedPut() {
 		var contentLength uint64
 		var err error
 		vars := mux.Vars(r)
@@ -99,7 +99,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	// look for custom user agent
 	gouseragent := regexp.MustCompile("dtfc/.*")
-	if config.ALLOWGET == "true" {
+	if allowedGet() {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
 		filename, reader, _, modTime, err = storage.Seeker(hash)

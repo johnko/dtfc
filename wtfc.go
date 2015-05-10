@@ -42,7 +42,7 @@ import (
 func headHandler(w http.ResponseWriter, r *http.Request) {
 	// force close because curl tries to keep open
 	w.Header().Set("Connection", "close")
-	if config.ALLOWGET == "true" {
+	if allowedHead() {
 		vars := mux.Vars(r)
 		hash := vars["hash"]
 		_, _, _, err := storage.Head(hash)

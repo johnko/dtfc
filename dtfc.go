@@ -35,6 +35,30 @@ import (
 	"time"
 )
 
+func fileNotExists(str string) bool {
+	if _, err = os.Lstat(config.DENY+str); err != nil {
+		// denyput not found, so allowed = true
+		return true
+	}
+	return false
+}
+
+func allowedPut() bool {
+	return fileNotExists("put")
+}
+
+func allowedGet() bool {
+	return fileNotExists("get")
+}
+
+func allowedHead() bool {
+	return fileNotExists("head")
+}
+
+func allowedDelete() bool {
+	return fileNotExists("delete")
+}
+
 func refreshPeerList() error {
 	newhash, err := Sha512(config.PEERLIST, "")
 	if err != nil {

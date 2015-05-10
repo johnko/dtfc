@@ -7,17 +7,15 @@
 MYUSER="dtfc"
 name="dtfc"
 MYPORT="8080"
-ALLOWDELETE="true"
-ALLOWGET="true"
-ALLOWPUT="true"
 
 start_cmd="my_start"
 stop_cmd="my_stop"
 mylog="/var/log/${name}.log"
 MYBASE="/usr/home/${MYUSER}/base"
 mytmp="/usr/home/${MYUSER}/tmp"
-MYPEERLIST="/usr/home/${MYUSER}/peerlist.txt"
-mymelist="/usr/home/${MYUSER}/melist.txt"
+MYPEERLIST="/usr/home/${MYUSER}/config/peerlist.txt"
+mymelist="/usr/home/${MYUSER}/config/melist.txt"
+MYDENY="/usr/home/${MYUSER}/config/deny"
 my_start()
 {
     # test variables in this function before using them
@@ -45,24 +43,16 @@ my_start()
         echo "Variable MYPORT undefined in $0" >&2
         exit 1
     fi
-    if     [ "x" = "x${ALLOWPUT}" ]; then
-        echo "Variable ALLOWPUT undefined in $0" >&2
-        exit 1
-    fi
-    if     [ "x" = "x${ALLOWDELETE}" ]; then
-        echo "Variable ALLOWDELETE undefined in $0" >&2
-        exit 1
-    fi
-    if     [ "x" = "x${ALLOWGET}" ]; then
-        echo "Variable ALLOWGET undefined in $0" >&2
-        exit 1
-    fi
     if     [ "x" = "x${MYPEERLIST}" ]; then
         echo "Variable MYPEERLIST undefined in $0" >&2
         exit 1
     fi
     if     [ "x" = "x${mymelist}" ]; then
         echo "Variable mymelist undefined in $0" >&2
+        exit 1
+    fi
+    if     [ "x" = "x${MYDENY}" ]; then
+        echo "Variable MYDENY undefined in $0" >&2
         exit 1
     fi
     if [                    ! -e "${MYPEERLIST}" ]; then
@@ -88,9 +78,7 @@ my_start()
             --port               ${MYPORT} \
             --temp               ${mytmp}/ \
             --basedir            ${MYBASE}/ \
-            --allowdelete        ${ALLOWDELETE} \
-            --allowget           ${ALLOWGET} \
-            --allowput           ${ALLOWPUT} \
+            --deny               ${MYDENY} \
             --melist             ${mymelist} \
             --peerlist           ${MYPEERLIST} \
             --log                ${mylog} &
