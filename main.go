@@ -69,6 +69,8 @@ var config struct {
 	PEERLISTHASH string
 }
 
+var PEERLOADING map[string]bool
+
 var storage Storage
 
 var cmdSHASUM string

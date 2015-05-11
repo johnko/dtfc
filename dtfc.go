@@ -127,11 +127,16 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 			client := &http.Client{Transport: tr}
 	*/
 	// end golang example
+	// if already peerloading a hash, wait
+	if PEERLOADING[oldhash] {
+		// TODO return 503 and Retry-After
+		return
+	}
+	// track hashes being peerloaded
+	PEERLOADING[oldhash] = true
 	client := &http.Client{}
 	tmphash := filepath.Join(config.Temp, oldhash)
 	for i := range config.PEERS {
-		// TODO track hashes being peerloaded
-		// TODO if already peerloading a hash, wait
 		currentpeer = strings.Trim(config.PEERS[i], "")
 		if (currentpeer != config.ME) && (currentpeer != "") && (found == false) {
 			var url = currentpeer + oldhash
@@ -199,6 +204,9 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 				}
 			}
 		}
+	}
+	if found == true {
+		PEERLOADING[oldhash] = false
 	}
 	return
 }
