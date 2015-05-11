@@ -117,6 +117,7 @@ func Sha512Word(word string) (hash string, err error) {
 }
 
 func (s *LocalStorage) saveFilename(hash string, filename string) {
+	var err error
 	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash))
 	var f1 io.WriteCloser
 	f1, err = os.OpenFile(filepath.Join(newpath, "filename"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)

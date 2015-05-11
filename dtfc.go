@@ -26,10 +26,11 @@ package main
 
 import (
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -151,7 +152,7 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 										"",
 										-1)
 									// ssave filename early
-									saveFilename(oldhash, filename)
+									storage.saveFilename(oldhash, filename)
 								}
 								defer resp.Body.Close()
 								// save file
