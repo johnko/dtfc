@@ -113,18 +113,18 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	found = false
 	// from golang example
 	/*
-	const rootPEM = `
------BEGIN CERTIFICATE-----
------END CERTIFICATE-----`
-	roots := x509.NewCertPool()
-	ok := roots.AppendCertsFromPEM([]byte(rootPEM))
-	if !ok {
-		panic("failed to parse root certificate")
-	}
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{RootCAs: roots},
-	}
-	client := &http.Client{Transport: tr}
+		const rootPEM = `
+	-----BEGIN CERTIFICATE-----
+	-----END CERTIFICATE-----`
+		roots := x509.NewCertPool()
+		ok := roots.AppendCertsFromPEM([]byte(rootPEM))
+		if !ok {
+			panic("failed to parse root certificate")
+		}
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{RootCAs: roots},
+		}
+		client := &http.Client{Transport: tr}
 	*/
 	// end golang example
 	client := &http.Client{}
