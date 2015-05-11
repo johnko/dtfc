@@ -116,7 +116,7 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 			// if tmp file exists, means last download was incomplete
 			if _, err = os.Lstat(tmphash); err == nil {
 				// file found, continue download with curl
-				cmd := exec.Command(cmdCURL, "--continue-at", "-", "-o", tmphash, url)
+				cmd := exec.Command(cmdCURL, "--continue-at", "-", "--output", tmphash, url)
 				err = cmd.Run()
 				if err == nil {
 					found, filename, reader, modTime, err = foundHardLinkSha512Path(oldhash, tmphash)
