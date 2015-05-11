@@ -53,7 +53,7 @@ see `scripts/load-dependencies.sh`
   - [x] sequential
   - [x] set peers without restarting the program by rereading the peerlist?
   - [ ] better peer picker than sequential
-  - [ ] resume large downloads? curl -C - ?
+  - [ ] smart resume large downloads? curl -C - ? hash can only be peerloaded once.
 - Uploading:
   - [ ] PUT to another peer during first upload to avoid SPOF? but only if HEAD responds 404
 - Throttling:
