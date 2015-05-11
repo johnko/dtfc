@@ -25,8 +25,8 @@ SOFTWARE.
 package main
 
 import (
-	"crypto/tls"
-	"crypto/x509"
+	//"crypto/tls"
+	//"crypto/x509"
 	"io"
 	"log"
 	"net/http"
