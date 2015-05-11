@@ -136,11 +136,18 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 			log.Printf("trying to get from peer %s", url)
 			// if tmp file exists, means last download was incomplete
 			if _, err = os.Lstat(tmphash); err == nil {
-				// file found, continue download with curl
+				// tmpfile found, continue download with curl
 				cmd := exec.Command(cmdCURL, "--continue-at", "-", "--output", tmphash, url)
 				err = cmd.Run()
 				if err == nil {
+					// no error then curl is done
 					found, filename, reader, modTime, err = foundHardLinkSha512Path(oldhash, tmphash)
+					if err == nil {
+						if found == false {
+							// no error, but not found, then the tmp is corrupt
+							os.Remove(tmphash)
+						}
+					}
 				}
 			} else {
 				req, err = http.NewRequest("GET", url, nil)
