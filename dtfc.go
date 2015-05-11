@@ -225,36 +225,36 @@ ZraXXJTXbIBuWOeSFOuIU42qt0KFF94/s2vuneX2PBqMhpazFe/kGwub
 					found, filename, reader, modTime, err = foundHardLinkSha512Path(oldhash, tmphash)
 				}
 			} else {
-				file, err = os.OpenFile(tmphash, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+				req, err = http.NewRequest("GET", url, nil)
 				if err != nil {
 					log.Printf("%s", err.Error())
 				} else {
-					defer file.Close()
-					req, err = http.NewRequest("GET", url, nil)
-					if err != nil {
-						log.Printf("%s", err.Error())
-					} else {
-						// set user agent
-						req.Header.Set("User-Agent", SERVER_INFO+"/"+SERVER_VERSION)
-						resp, err = client.Do(req)
-						if err == nil {
-							if resp.StatusCode == 200 {
-								// get filename
-								if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
-									filename = strings.Replace(
-										strings.Replace(
-											fnre.FindString(
-												resp.Header.Get("Content-Disposition")),
-											"filename=",
-											"",
-											-1),
-										"\"",
+					// set user agent
+					req.Header.Set("User-Agent", SERVER_INFO+"/"+SERVER_VERSION)
+					resp, err = client.Do(req)
+					if err == nil {
+						if resp.StatusCode == 200 {
+							// get filename
+							if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
+								filename = strings.Replace(
+									strings.Replace(
+										fnre.FindString(
+											resp.Header.Get("Content-Disposition")),
+										"filename=",
 										"",
-										-1)
-									// ssave filename early
-									storage.saveFilename(oldhash, filename)
-								}
-								defer resp.Body.Close()
+										-1),
+									"\"",
+									"",
+									-1)
+								// ssave filename early
+								storage.saveFilename(oldhash, filename)
+							}
+							defer resp.Body.Close()
+							file, err = os.OpenFile(tmphash, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+							if err != nil {
+								log.Printf("%s", err.Error())
+							} else {
+								defer file.Close()
 								// save file
 								_, err = io.Copy(file, resp.Body)
 								if err != nil {
