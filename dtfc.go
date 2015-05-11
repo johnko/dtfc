@@ -81,13 +81,13 @@ func refreshPeerList() error {
 func foundHardLinkSha512Path(oldhash string, oldfile string) (found bool, filename string, reader io.ReadSeeker, modTime time.Time, err error) {
 	found = false
 	var hash string
-	if hash, _, err = Sha512(oldfile, ""); err != nil {
+	if hash, err = Sha512(oldfile, ""); err != nil {
 		log.Printf("%s", err.Error())
 		return
 	} else {
 		// compare oldhash to newhash so we are returning the right data and peer is not corrupt
 		if oldhash == hash {
-			_, err = storage.HardLinkSha512Path(oldfile, filename)
+			_, _, err = storage.HardLinkSha512Path(oldfile, filename)
 			if err != nil {
 				log.Printf("%s", err.Error())
 				return
