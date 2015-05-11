@@ -80,7 +80,7 @@ func NameLengthTime(path string) (filename string, contentLength uint64, modTime
 	modTime = fi.ModTime()
 	// Use tail to get the last real filename
 	var lastname []byte
-	lastname, _ = exec.Command(cmdTAIL, "-1", filepath.Join(path, "filename")).Output()
+	lastname, _ = exec.Command(cmdTAIL, "-n", "1", filepath.Join(path, "filename")).Output()
 	// Assume the first output before space is the mimeType
 	filename = strings.TrimSpace(fmt.Sprintf("%s", lastname))
 	return
@@ -98,7 +98,7 @@ func Sha512(str string, word string) (hash string, err error) {
 	//}
 
 	// TODO: is shasum more universal on *nix systems?
-	cmd := exec.Command(cmdSHASUM, "-a", "512", str)
+	cmd := exec.Command(cmdSHASUM, "--algorithm", "512", str)
 	if word != "" {
 		cmd.Stdin = strings.NewReader(word)
 	}
