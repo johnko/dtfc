@@ -61,7 +61,7 @@ const timeHTTPLayout = "Mon, 2 Jan 2006 15:04:05 MST"
 const _24K = (1 << 20) * 24
 
 var config struct {
-	DENY  string
+	DENY         string
 	Temp         string
 	ME           string
 	PEERS        []string
@@ -141,7 +141,7 @@ func main() {
 		if err != nil {
 			log.Panic("Error while reading melist.", err)
 		} else {
-			config.ME = arraystring[0]
+			config.ME = strings.Trim(arraystring[0], "")
 		}
 	}
 	if strings.Trim(config.ME, " ") == "" {

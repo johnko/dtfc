@@ -105,13 +105,15 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	var file *os.File
 	var req *http.Request
 	var resp *http.Response
+	var currentpeer string
 	fnre := regexp.MustCompile("filename=\".*\"")
 	found = false
 	client := &http.Client{}
 	tmphash := filepath.Join(config.Temp, oldhash)
 	for i := range config.PEERS {
-		if (config.PEERS[i] != config.ME) && (found == false) {
-			var url = config.PEERS[i] + oldhash
+		currentpeer = strings.Trim(config.PEERS[i], "")
+		if (currentpeer != config.ME) && (currentpeer != "") && (found == false) {
+			var url = currentpeer + oldhash
 			log.Printf("trying to get from peer %s", url)
 			// if tmp file exists, means last download was incomplete
 			if _, err = os.Lstat(tmphash); err == nil {
