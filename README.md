@@ -20,7 +20,7 @@ Decentralized/distributed storage          | Kind of. There is no central store 
 Decentralized/distributed transfers        | Kind of. Nodes can pull from any peers in their peerlist.
 Chunked data transfers from multiple hosts | No.
 Secure?                                    | No, plain/clear text HTTP. Suggest to use SSL/TLS reverse proxy.
-Optimal use                                | Good for medium files.
+Optimal use                                | Good for medium files. Also maybe as a regional cache?
 Limitations                                | Not the best for large files (interruption of HTTP will stop transfer). URL based on sha512 of file contents.
 
 ## BUILD DEPENDENCIES
