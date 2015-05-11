@@ -19,7 +19,7 @@ Centralized aspect                         | Only the node with the first PUT wi
 Decentralized/distributed storage          | Kind of. There is no central store because each node will have a copy of that file once they perform a successful GET. Akin to RAID1 mirror, but not to RAID5 span.
 Decentralized/distributed transfers        | Kind of. Nodes can pull from any peers in their peerlist.
 Chunked data transfers from multiple hosts | No.
-Security?                                  | Bad alone, plain/clear text HTTP. Suggest to use SSL/TLS reverse proxy.
+Secure?                                    | No, plain/clear text HTTP. Suggest to use SSL/TLS reverse proxy.
 Optimal use                                | Good for medium files.
 Limitations                                | Not the best for large files (interruption of HTTP will stop transfer). URL based on sha512 of file contents.
 
