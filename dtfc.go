@@ -149,7 +149,9 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 						}
 					}
 				}
-			} else {
+			}
+			// this direct fetch happens here after the curl in case the hash mismatch and remove tmphash
+			if found == false {
 				req, err = http.NewRequest("GET", url, nil)
 				if err != nil {
 					log.Printf("%s", err.Error())
