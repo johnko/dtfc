@@ -33,6 +33,8 @@ see `scripts/load-dependencies.sh`
 
 - tail: `/usr/bin/tail`
 
+- curl: `/usr/local/bin/curl` or `/opt/local/bin/curl`
+
 ## THOUGHTS
 
 - Flags:

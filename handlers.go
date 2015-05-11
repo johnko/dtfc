@@ -110,7 +110,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 				var found = false
 				if !gouseragent.MatchString(r.UserAgent()) {
 					// dtfc specific
-					found, filename, reader, _, modTime, err = getFromPeers(hash)
+					found, filename, reader, modTime, err = getFromPeers(hash)
 					if err != nil {
 						http.Error(w, "Internal server error.", 500)
 						return

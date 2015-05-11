@@ -42,15 +42,17 @@ import (
 )
 
 const SERVER_INFO = "dtfc"
-const SERVER_VERSION = "0.0.2"
+const SERVER_VERSION = "0.0.3"
 
 // we use these commands to reduce the amount of garbage collection golang needs to do
 const cmdSHASUMFreeBSD = "/usr/local/bin/shasum"
-
-// or on Apple using Macports
 const cmdSHASUMApple = "/opt/local/bin/shasum"
+
 const cmdSHA512 = "/sbin/sha512"
 const cmdTAIL = "/usr/bin/tail"
+
+const cmdCURLFreeBSD = "/usr/local/bin/curl"
+const cmdCURLApple = "/opt/local/bin/curl"
 
 const timeLayout = "2006-01-02 15:04:05 MST"
 const timeHTTPLayout = "Mon, 2 Jan 2006 15:04:05 MST"
@@ -70,6 +72,7 @@ var config struct {
 var storage Storage
 
 var cmdSHASUM string
+var cmdCURL string
 
 func init() {
 	config.Temp = os.TempDir()
@@ -88,8 +91,19 @@ func main() {
 	if _, err = os.Lstat(cmdSHASUM); err != nil {
 		log.Panic("Error while looking for shasum executable.")
 	}
+
 	if _, err = os.Lstat(cmdTAIL); err != nil {
 		log.Panic("Error while looking for tail executable.")
+	}
+
+	if _, err = os.Lstat(cmdCURLFreeBSD); err == nil {
+		cmdCURL = cmdCURLFreeBSD
+	}
+	if _, err = os.Lstat(cmdCURLApple); err == nil {
+		cmdCURL = cmdCURLApple
+	}
+	if _, err = os.Lstat(cmdCURL); err != nil {
+		log.Panic("Error while looking for shasum executable.")
 	}
 
 	port := flag.String("port", "8080", "port number, default: 8080")

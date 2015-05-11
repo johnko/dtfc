@@ -37,7 +37,7 @@ import (
 
 func fileNotExists(str string) bool {
 	var err error
-	if _, err = os.Lstat(config.DENY+str); err != nil {
+	if _, err = os.Lstat(config.DENY + str); err != nil {
 		// denyput not found, so allowed = true
 		return true
 	}
@@ -78,64 +78,88 @@ func refreshPeerList() error {
 	return err
 }
 
-func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSeeker, contentLength uint64, modTime time.Time, err error) {
+func foundHardLinkSha512Path(oldhash string, oldfile string) (found bool, filename string, reader io.ReadSeeker, modTime time.Time, err error) {
+	found = false
+	var hash string
+	if hash, _, err = Sha512(oldfile, ""); err != nil {
+		log.Printf("%s", err.Error())
+		return
+	} else {
+		// compare oldhash to newhash so we are returning the right data and peer is not corrupt
+		if oldhash == hash {
+			_, err = storage.HardLinkSha512Path(oldfile, filename)
+			if err != nil {
+				log.Printf("%s", err.Error())
+				return
+			}
+			filename, reader, _, modTime, err = storage.Seeker(hash)
+			if err == nil {
+				found = true
+			}
+		}
+	}
+	return
+}
+
+func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSeeker, modTime time.Time, err error) {
 	var file *os.File
 	var req *http.Request
 	var resp *http.Response
 	fnre := regexp.MustCompile("filename=\".*\"")
 	found = false
 	client := &http.Client{}
+	tmphash := filepath.Join(config.Temp, oldhash)
 	for i := range config.PEERS {
 		if (config.PEERS[i] != config.ME) && (found == false) {
 			var url = config.PEERS[i] + oldhash
 			log.Printf("trying to get from peer %s", url)
-			file, err = ioutil.TempFile(config.Temp, "peer-")
-			if err != nil {
-				log.Printf("%s", err.Error())
+			// if tmp file exists, means last download was incomplete
+			if _, err = os.Lstat(tmphash); err == nil {
+				// file found, continue download with curl
+				cmd := exec.Command(cmdCURL, "--continue-at", "-", "-o", tmphash, url)
+				err = cmd.Run()
+				if err == nil {
+					found, filename, reader, modTime, err = foundHardLinkSha512Path(oldhash, tmphash)
+				}
 			} else {
-				defer file.Close()
-				req, err = http.NewRequest("GET", url, nil)
+				file, err = os.OpenFile(tmphash, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 				if err != nil {
 					log.Printf("%s", err.Error())
 				} else {
-					// set user agent
-					req.Header.Set("User-Agent", SERVER_INFO+"/"+SERVER_VERSION)
-					resp, err = client.Do(req)
-					if err == nil {
-						if resp.StatusCode == 200 {
-							// get filename
-							if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
-								filename = strings.Replace(
-									strings.Replace(
-										fnre.FindString(
-											resp.Header.Get("Content-Disposition")),
-										"filename=",
+					defer file.Close()
+					req, err = http.NewRequest("GET", url, nil)
+					if err != nil {
+						log.Printf("%s", err.Error())
+					} else {
+						// set user agent
+						req.Header.Set("User-Agent", SERVER_INFO+"/"+SERVER_VERSION)
+						resp, err = client.Do(req)
+						if err == nil {
+							if resp.StatusCode == 200 {
+								// get filename
+								if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
+									filename = strings.Replace(
+										strings.Replace(
+											fnre.FindString(
+												resp.Header.Get("Content-Disposition")),
+											"filename=",
+											"",
+											-1),
+										"\"",
 										"",
-										-1),
-									"\"",
-									"",
-									-1)
-							}
-							defer resp.Body.Close()
-							// save file
-							_, err = io.Copy(file, resp.Body)
-							if err != nil {
-								os.Remove(file.Name())
-								log.Printf("%s", err.Error())
-							} else {
-								// go through hash and hardlink process
-								var hash string
-								if hash, _, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
+										-1)
+									// ssave filename early
+									saveFilename(oldhash, filename)
+								}
+								defer resp.Body.Close()
+								// save file
+								_, err = io.Copy(file, resp.Body)
+								if err != nil {
+									// download interrupted
 									log.Printf("%s", err.Error())
-								} else if err == nil {
-									// compare oldhash to newhash so we are returning the right data and peer is not corrupt
-									if oldhash == hash {
-										filename, reader, _, modTime, err = storage.Seeker(hash)
-										if err == nil {
-											found = true
-											return
-										}
-									}
+								} else {
+									// go through hash and hardlink process
+									found, filename, reader, modTime, err = foundHardLinkSha512Path(oldhash, file.Name())
 								}
 							}
 						}
