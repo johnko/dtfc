@@ -204,7 +204,7 @@ ZraXXJTXbIBuWOeSFOuIU42qt0KFF94/s2vuneX2PBqMhpazFe/kGwub
 		panic("failed to parse root certificate")
 	}
 	tr := &http.Transport{
-		TLSClientConfig:    &tls.Config{RootCAs: roots}
+		TLSClientConfig: &tls.Config{RootCAs: roots},
 	}
 	// end golang example
 	client := &http.Client{Transport: tr}
