@@ -128,7 +128,7 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	*/
 	// end golang example
 	// if already peerloading a hash, wait
-	if PEERLOADING[oldhash] {
+	if PEERLOADING[oldhash] == true {
 		// TODO return 503 and Retry-After
 		return
 	}
