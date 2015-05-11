@@ -112,6 +112,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 					// dtfc specific
 					found, filename, reader, modTime, err = getFromPeers(hash)
 					if err != nil {
+						log.Printf("Error while getFromPeers. %s", err.Error())
 						http.Error(w, "Internal server error.", 500)
 						return
 					}
