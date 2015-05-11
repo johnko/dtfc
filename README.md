@@ -21,7 +21,7 @@ Decentralized/distributed transfers        | Kind of. Nodes can pull from any pe
 Chunked data transfers from multiple hosts | No.
 Secure?                                    | No, plain/clear text HTTP. Suggest to use SSL/TLS reverse proxy.
 Optimal use                                | Good for medium files. Also maybe as a regional cache?
-Limitations                                | Not the best for large files (interruption of HTTP will stop transfer). URL based on sha512 of file contents.
+Limitations                                | Not the best for large files (interruption of HTTP will stop transfer unless we try curl -C - ?). URL based on sha512 of file contents.
 
 ## BUILD DEPENDENCIES
 
@@ -51,6 +51,7 @@ see `scripts/load-dependencies.sh`
   - [x] sequential
   - [x] set peers without restarting the program by rereading the peerlist?
   - [ ] better peer picker than sequential
+  - [ ] resume large downloads? curl -C - ?
 - Uploading:
   - [ ] PUT to another peer during first upload to avoid SPOF? but only if HEAD responds 404
 - Throttling:
