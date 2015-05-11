@@ -121,8 +121,10 @@ func (s *LocalStorage) saveFilename(hash string, filename string) {
 	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash))
 	var f1 io.WriteCloser
 	f1, err = os.OpenFile(filepath.Join(newpath, "filename"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
-	defer f1.Close()
-	io.Copy(f1, strings.NewReader(fmt.Sprintf("%s\n", filename)))
+	if err == nil {
+		defer f1.Close()
+		io.Copy(f1, strings.NewReader(fmt.Sprintf("%s\n", filename)))
+	}
 }
 
 func (s *LocalStorage) HardLinkSha512Path(oldpath string, filename string) (hash string, contentLength uint64, err error) {
