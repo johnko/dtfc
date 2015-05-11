@@ -83,6 +83,8 @@ func init() {
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
+	PEERLOADING = make(map[string]bool)
+
 	var err error
 	if _, err = os.Lstat(cmdSHASUMFreeBSD); err == nil {
 		cmdSHASUM = cmdSHASUMFreeBSD
