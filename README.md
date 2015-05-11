@@ -15,7 +15,7 @@ I'm hoping dtfc can be a simple distributed GET/PUT service for CouchDB attachme
 
 Property                                   | Description
 -------------------------------------------|------------------
-Centralized aspect                         | Only the node with the first PUT will be central until a peer performs a GET to the unique node.
+Centralized aspect                         | Only the node with the first PUT will be central until a peer performs a successful GET to the unique node.
 Decentralized/distributed storage          | Kind of. There is no central store because each node will have a copy of that file once they perform a successful GET. Akin to RAID1 mirror, but not to RAID5 span.
 Decentralized/distributed transfers        | Kind of. Nodes can pull from any peers in their peerlist.
 Chunked data transfers from multiple hosts | No.
