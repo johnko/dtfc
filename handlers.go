@@ -108,6 +108,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 				log.Printf("%s", err.Error())
 				// try from peer
 				var found = false
+				// TODO this useragent test fails too often. too many recursive GETs, maybe try GET /hash/norecursion?
 				if !gouseragent.MatchString(r.UserAgent()) {
 					// dtfc specific
 					found, filename, reader, modTime, err = getFromPeers(hash)
