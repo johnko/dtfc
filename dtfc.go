@@ -27,6 +27,7 @@ package main
 import (
 	//"crypto/tls"
 	//"crypto/x509"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -130,6 +131,7 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	// if already peerloading a hash, wait
 	if PEERLOADING[oldhash] == true {
 		// TODO return 503 and Retry-After
+		err = fmt.Errorf("Already peerloading %s.", oldhash)
 		return
 	}
 	// track hashes being peerloaded

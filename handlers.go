@@ -112,9 +112,18 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 					// dtfc specific
 					found, filename, reader, modTime, err = getFromPeers(hash)
 					if err != nil {
-						log.Printf("Error while getFromPeers. %s", err.Error())
-						http.Error(w, "Internal server error.", 500)
-						return
+						if strings.Index(err.Error(), "Already peerloading") >= 0 {
+							// https://tools.ietf.org/html/rfc2616#section-10.5.4
+							log.Printf("%s", err.Error())
+							// Retry in 2 minutes (120 seconds)
+							w.Header().Set("Retry-After", fmt.Sprintf("120"))
+							http.Error(w, "Service Unavailable. Try again in 2 minutes.", 503)
+							return
+						} else {
+							log.Printf("Error while getFromPeers. %s", err.Error())
+							http.Error(w, "Internal server error.", 500)
+							return
+						}
 					}
 				}
 				// end try from peer
