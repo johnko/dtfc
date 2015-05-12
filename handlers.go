@@ -77,12 +77,12 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Internal server error.", 500)
 				return
 			} else {
-				w.Header().Set("Content-Type", "text/plain")
 				var hash string
 				if hash, contentLength, err = storage.HardLinkSha512Path(file.Name(), filename); err != nil {
 					log.Printf("%s", err.Error())
 				} else if err == nil {
 					log.Printf("Hashed %s as %s", filename, hash)
+					w.Header().Set("Content-Type", "text/plain")
 					fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\",\"length\":%d,\"content_type\":\"%s\",\"stub\":true}", hash, filename, contentLength, contentType)
 				}
 			}
