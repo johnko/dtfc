@@ -110,6 +110,8 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	var req *http.Request
 	var resp *http.Response
 	var currentpeer string
+	var pgrepoutput []byte
+	var curlrunning string
 	fnre := regexp.MustCompile("filename=\".*\"")
 	found = false
 	// from golang example
@@ -134,10 +136,17 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 		err = fmt.Errorf("Already peerloading %s.", oldhash)
 		return
 	}
-	pgrepoutput, err := exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
-	curlrunning := strings.TrimSpace(fmt.Sprintf("%s", pgrepoutput))
-	if curlrunning != "" {
-		PEERLOADING[oldhash] = true
+	// if some process is using our hash, peerloading is true
+	pgrepoutput, err = exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
+	if err != nil {
+		log.Printf("%s", err.Error())
+	} else {
+		curlrunning = strings.TrimSpace(fmt.Sprintf("%s", pgrepoutput))
+		if curlrunning != "" {
+			PEERLOADING[oldhash] = true
+			err = fmt.Errorf("Already peerloading %s.", oldhash)
+			return
+		}
 	}
 	// track hashes being peerloaded
 	PEERLOADING[oldhash] = true
