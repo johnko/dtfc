@@ -54,6 +54,9 @@ const cmdTAIL = "/usr/bin/tail"
 const cmdCURLFreeBSD = "/usr/local/bin/curl"
 const cmdCURLApple = "/opt/local/bin/curl"
 
+const cmdPGREPFreeBSD = "/bin/pgrep"
+const cmdPGREPApple = "/usr/bin/pgrep"
+
 const timeLayout = "2006-01-02 15:04:05 MST"
 const timeHTTPLayout = "Mon, 2 Jan 2006 15:04:05 MST"
 
@@ -75,6 +78,7 @@ var storage Storage
 
 var cmdSHASUM string
 var cmdCURL string
+var cmdPGREP string
 
 func init() {
 	config.Temp = os.TempDir()
@@ -86,6 +90,13 @@ func main() {
 	PEERLOADING = make(map[string]bool)
 
 	var err error
+
+	// cmdTAIL
+	if _, err = os.Lstat(cmdTAIL); err != nil {
+		log.Panic("Error while looking for tail executable.")
+	}
+
+	// cmdSHASUM
 	if _, err = os.Lstat(cmdSHASUMFreeBSD); err == nil {
 		cmdSHASUM = cmdSHASUMFreeBSD
 	}
@@ -96,10 +107,7 @@ func main() {
 		log.Panic("Error while looking for shasum executable.")
 	}
 
-	if _, err = os.Lstat(cmdTAIL); err != nil {
-		log.Panic("Error while looking for tail executable.")
-	}
-
+	// cmdCURL
 	if _, err = os.Lstat(cmdCURLFreeBSD); err == nil {
 		cmdCURL = cmdCURLFreeBSD
 	}
@@ -107,7 +115,18 @@ func main() {
 		cmdCURL = cmdCURLApple
 	}
 	if _, err = os.Lstat(cmdCURL); err != nil {
-		log.Panic("Error while looking for shasum executable.")
+		log.Panic("Error while looking for curl executable.")
+	}
+
+	// cmdPGREP
+	if _, err = os.Lstat(cmdPGREPFreeBSD); err == nil {
+		cmdPGREP = cmdPGREPFreeBSD
+	}
+	if _, err = os.Lstat(cmdPGREPApple); err == nil {
+		cmdPGREP = cmdPGREPApple
+	}
+	if _, err = os.Lstat(cmdPGREP); err != nil {
+		log.Panic("Error while looking for pgrep executable.")
 	}
 
 	port := flag.String("port", "8080", "port number, default: 8080")

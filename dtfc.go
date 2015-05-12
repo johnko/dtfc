@@ -134,8 +134,9 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 		err = fmt.Errorf("Already peerloading %s.", oldhash)
 		return
 	}
-	curlrunning := exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
-	if strings.TrimSpace(curlrunning) != "" {
+	pgrepoutput, err := exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
+	curlrunning = strings.TrimSpace(fmt.Sprintf("%s", pgrepoutput))
+	if curlrunning != "" {
 		PEERLOADING[oldhash] = true
 	}
 	// track hashes being peerloaded
