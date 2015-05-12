@@ -134,12 +134,16 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 		err = fmt.Errorf("Already peerloading %s.", oldhash)
 		return
 	}
+	curlrunning := exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
+	if strings.TrimSpace(curlrunning) != "" {
+		PEERLOADING[oldhash] = true
+	}
 	// track hashes being peerloaded
 	PEERLOADING[oldhash] = true
 	client := &http.Client{}
 	tmphash := filepath.Join(config.Temp, oldhash)
 	for i := range config.PEERS {
-		currentpeer = strings.Trim(config.PEERS[i], "")
+		currentpeer = strings.TrimSpace(config.PEERS[i])
 		if (currentpeer != config.ME) && (currentpeer != "") && (found == false) {
 			var url = currentpeer + oldhash
 			log.Printf("trying to get from peer %s", url)

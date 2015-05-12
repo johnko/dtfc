@@ -145,10 +145,10 @@ func main() {
 		if err != nil {
 			log.Panic("Error while reading melist.", err)
 		} else {
-			config.ME = strings.Trim(arraystring[0], "")
+			config.ME = strings.TrimSpace(arraystring[0])
 		}
 	}
-	if strings.Trim(config.ME, " ") == "" {
+	if strings.TrimSpace(config.ME) == "" {
 		log.Panic("Error while trying to figure out me.")
 	}
 	log.Printf("config.ME: %s", config.ME)

@@ -18,7 +18,7 @@ func readLines(path string) ([]string, error) {
 	var tmpstr string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		tmpstr = strings.Trim(scanner.Text(), "")
+		tmpstr = strings.TrimSpace(scanner.Text())
 		if tmpstr != "" {
 			lines = append(lines, tmpstr)
 		}
