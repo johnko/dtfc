@@ -83,7 +83,7 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 					log.Printf("%s", err.Error())
 				} else if err == nil {
 					log.Printf("Hashed %s as %s", filename, hash)
-					fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\",\"length\":%d,\"content_type\":\"%s\",\"stub\":true}", hash, filename, contentLength, strings.Split(contentType, ";")[0])
+					fmt.Fprintf(w, "{\"sha512\":\"%s\",\"filename\":\"%s\",\"length\":%d,\"content_type\":\"%s\",\"stub\":true}", hash, filename, contentLength, contentType)
 				}
 			}
 		}
