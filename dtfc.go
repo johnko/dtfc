@@ -140,6 +140,8 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	pgrepoutput, err = exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
 	if err != nil {
 		log.Printf("pgrepoutput: %s", err.Error())
+		// reset err so we don't throwup
+		err = nil
 	} else {
 		curlrunning = strings.TrimSpace(fmt.Sprintf("%s", pgrepoutput))
 		log.Printf("curlrunning: %s.", curlrunning)
