@@ -190,8 +190,8 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 						defer resp.Body.Close()
 						// get filename
 						contentDisposition := resp.Header.Get("Content-Disposition")
-						log.Printf("Got Content-Disposition: %s.", contentDisposition)
 						if fnre.MatchString(contentDisposition) {
+							log.Printf("Got Content-Disposition: %s.", contentDisposition)
 							filename = strings.Replace(
 								strings.Replace(
 									fnre.FindString(contentDisposition),

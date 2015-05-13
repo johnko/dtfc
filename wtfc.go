@@ -122,6 +122,7 @@ func (s *LocalStorage) saveFilename(hash string, filename string) {
 	var f1 io.WriteCloser
 	f1, err = os.OpenFile(filepath.Join(newpath, "filename"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
 	if err == nil {
+		log.Printf("saveFilename: %s.", filename)
 		defer f1.Close()
 		io.Copy(f1, strings.NewReader(fmt.Sprintf("%s\n", filename)))
 	}
