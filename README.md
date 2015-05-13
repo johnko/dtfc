@@ -55,7 +55,7 @@ see `scripts/load-dependencies.sh`
   - [x] sequential
   - [x] set peers without restarting the program by rereading the peerlist?
   - [ ] better peer picker than sequential
-  - [ ] smart resume large downloads? curl -C - ? hash can only be peerloaded once.
+  - [x] smart resume large downloads? curl -C - ? hash can only be peerloaded once.
 - Uploading:
   - [ ] PUT to another peer during first upload to avoid SPOF? but only if HEAD responds 404
 - Throttling:
@@ -66,14 +66,15 @@ see `scripts/load-dependencies.sh`
   - [x] storage path + sha512 hash (split every 2 chars) + "data"
   - [x] save whole file as is in "data"
   - [ ] map file name to sha512
-  - [ ] if possible keep the Storage path on a separate mount so you can run "df -h"
+  - [ ] if possible keep the Storage path on a separate mount so you can run "df -h" to see usage
 - Integrity:
   - [x] Verify sha512 before saving (it's part of the save process)
   - [ ] Verify sha512 before serving
 - In Response to:
   - [x] PUT /filename: JSON of sha512 and filename
   - [x] GET /health: 200 OK
-  - [x] GET /sha512: data
+  - [x] GET /sha512: data, or peerload
+  - [x] GET /sha512/nopeerload: data, don't peerload
   - [ ] DELETE /sha512: ??? may have problems if a node was offline while DELETE command was sent?
 - Security:
   - [ ] figure out how to do authentication/authorization

@@ -97,19 +97,22 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var reader io.ReadSeeker
 	var modTime time.Time
 	var err error
-	// look for custom user agent
-	gouseragent := regexp.MustCompile("dtfc.*")
 	if allowedGet() {
 		vars := mux.Vars(r)
-		hash := vars["hash"]
+		hash := strings.TrimSpace(vars["hash"])
+		option := strings.TrimSpace(vars["option"])
+		if (hash == nil) || (hash == "") {
+			http.Error(w, "404 Not Found.", 404)
+			return
+		}
 		filename, reader, _, modTime, err = storage.Seeker(hash)
 		if err != nil {
 			if strings.Index(err.Error(), "no such file or directory") >= 0 {
 				log.Printf("%s", err.Error())
 				// try from peer
 				var found = false
-				// TODO this useragent test fails too often. too many recursive GETs, maybe try GET /hash/norecursion?
-				if !gouseragent.MatchString(r.UserAgent()) {
+				// if not GET /hash/nopeerload, then getFromPeers
+				if (strings.Index(option, "nopeerload") >= 0) == false {
 					// dtfc specific
 					found, filename, reader, modTime, err = getFromPeers(hash)
 					if err != nil {
@@ -129,7 +132,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				// end try from peer
 				if found == false {
-					notFoundHandler(w, r)
+					http.Error(w, "404 Not Found.", 404)
 					return
 				}
 			} else {

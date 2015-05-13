@@ -139,9 +139,10 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	// if some process is using our hash, peerloading is true
 	pgrepoutput, err = exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
 	if err != nil {
-		log.Printf("%s", err.Error())
+		log.Printf("pgrepoutput: %s", err.Error())
 	} else {
 		curlrunning = strings.TrimSpace(fmt.Sprintf("%s", pgrepoutput))
+		log.Printf("curlrunning: %s.", curlrunning)
 		if curlrunning != "" {
 			PEERLOADING[oldhash] = true
 			err = fmt.Errorf("Already peerloading %s.", oldhash)
@@ -155,7 +156,7 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	for i := range config.PEERS {
 		currentpeer = strings.TrimSpace(config.PEERS[i])
 		if (currentpeer != config.ME) && (currentpeer != "") && (found == false) {
-			var url = currentpeer + oldhash
+			var url = currentpeer + oldhash + "/nopeerload"
 			log.Printf("trying to get from peer %s", url)
 			// if tmp file exists, means last download was incomplete
 			if _, err = os.Lstat(tmphash); err == nil {
