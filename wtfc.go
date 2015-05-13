@@ -148,7 +148,7 @@ func (s *LocalStorage) HardLinkSha512Path(oldpath string, filename string) (hash
 			err = nil
 		}
 	}
-	storage.saveFilename(newpath, filename)
+	storage.saveFilename(hash, filename)
 	os.Remove(oldpath)
 	return
 }
