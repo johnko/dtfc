@@ -35,7 +35,7 @@ see `scripts/load-dependencies.sh`
 
 - curl: `/usr/local/bin/curl` or `/opt/local/bin/curl`
 
-- pgrep: `` or ``
+- pgrep: `/bin/pgrep` or `/usr/bin/pgrep`
 
 ## THOUGHTS
 
