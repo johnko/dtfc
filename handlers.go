@@ -40,7 +40,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -101,7 +100,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		hash := strings.TrimSpace(vars["hash"])
 		option := strings.TrimSpace(vars["option"])
-		if (hash == nil) || (hash == "") {
+		if hash == "" {
 			http.Error(w, "404 Not Found.", 404)
 			return
 		}
