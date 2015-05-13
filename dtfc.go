@@ -231,8 +231,5 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 }
 
 func refreshPeersHandler(w http.ResponseWriter, r *http.Request) {
-	// refresh peers a percentage of the time
-	//if rand.Intn(10) == 0 {
 	refreshPeerList()
-	//}
 }

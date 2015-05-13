@@ -42,7 +42,7 @@ import (
 )
 
 const SERVER_INFO = "dtfc"
-const SERVER_VERSION = "0.0.3"
+const SERVER_VERSION = "0.0.4"
 
 // we use these commands to reduce the amount of garbage collection golang needs to do
 const cmdSHASUMFreeBSD = "/usr/local/bin/shasum"
