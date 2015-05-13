@@ -65,7 +65,7 @@ see `scripts/load-dependencies.sh`
 - Storage:
   - [x] storage path + sha512 hash (split every 2 chars) + "data"
   - [x] save whole file as is in "data"
-  - [ ] map file name to sha512
+  - [x] map file name to sha512
   - [ ] if possible keep the Storage path on a separate mount so you can run "df -h" to see usage
 - Integrity:
   - [x] Verify sha512 before saving (it's part of the save process)
