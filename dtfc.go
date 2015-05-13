@@ -138,7 +138,7 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 		return
 	}
 	// if some process is using our hash, peerloading is true
-	pgrepoutput, err = exec.Command(cmdPGREP, "-l", "-f", oldhash).Output()
+	pgrepoutput, err = exec.Command(cmdPGREP, "-l", "-f", "curl*continue*"+oldhash).Output()
 	if err != nil {
 		log.Printf("pgrepoutput: %s", err.Error())
 		// reset err so we don't throwup
@@ -232,6 +232,6 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 func refreshPeersHandler(w http.ResponseWriter, r *http.Request) {
 	// refresh peers a percentage of the time
 	//if rand.Intn(10) == 0 {
-		refreshPeerList()
+	refreshPeerList()
 	//}
 }
