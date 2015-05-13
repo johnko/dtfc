@@ -187,23 +187,23 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 					req.Header.Set("User-Agent", SERVER_INFO+"/"+SERVER_VERSION)
 					resp, err = client.Do(req)
 					if err == nil {
-						if resp.StatusCode == 200 {
-							// get filename
-							if fnre.MatchString(resp.Header.Get("Content-Disposition")) {
-								filename = strings.Replace(
-									strings.Replace(
-										fnre.FindString(
-											resp.Header.Get("Content-Disposition")),
-										"filename=",
-										"",
-										-1),
-									"\"",
+						defer resp.Body.Close()
+						// get filename
+						contentDisposition := resp.Header.Get("Content-Disposition")
+						if fnre.MatchString(contentDisposition) {
+							filename = strings.Replace(
+								strings.Replace(
+									fnre.FindString(contentDisposition),
+									"filename=",
 									"",
-									-1)
-								// ssave filename early
-								storage.saveFilename(oldhash, filename)
-							}
-							defer resp.Body.Close()
+									-1),
+								"\"",
+								"",
+								-1)
+							// save filename early
+							storage.saveFilename(oldhash, filename)
+						}
+						if resp.StatusCode == 200 {
 							file, err = os.OpenFile(tmphash, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 							if err != nil {
 								log.Printf("%s", err.Error())
