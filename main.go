@@ -184,6 +184,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health.html", healthHandler).Methods("GET")
+	r.HandleFunc("/refreshpeers.html", refreshPeersHandler).Methods("PUT")
 	r.HandleFunc("/{hash}/{option}", getHandler).Methods("GET")
 	r.HandleFunc("/{hash}", getHandler).Methods("GET")
 

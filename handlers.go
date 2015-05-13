@@ -35,7 +35,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"mime"
 	"net/http"
 	"os"
@@ -142,10 +141,6 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 		http.ServeContent(w, r, filename, modTime, reader)
-		// refresh peers a percentage of the time
-		if rand.Intn(10) == 0 {
-			refreshPeerList()
-		}
 	} else {
 		http.Error(w, "403 Forbidden. Downloading is disabled.", 403)
 	}

@@ -72,7 +72,8 @@ see `scripts/load-dependencies.sh`
   - [ ] Verify sha512 before serving
 - In Response to:
   - [x] PUT /filename: JSON of sha512 and filename
-  - [x] GET /health: 200 OK
+  - [x] PUT /refreshpeers.html: refresh PEERLIST from config
+  - [x] GET /health.html: 200 OK
   - [x] GET /sha512: data, or peerload
   - [x] GET /sha512/nopeerload: data, don't peerload
   - [ ] DELETE /sha512: ??? may have problems if a node was offline while DELETE command was sent?

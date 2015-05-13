@@ -30,6 +30,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/exec"
@@ -226,4 +227,11 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 	}
 	PEERLOADING[oldhash] = false
 	return
+}
+
+func refreshPeersHandler(w http.ResponseWriter, r *http.Request) {
+	// refresh peers a percentage of the time
+	//if rand.Intn(10) == 0 {
+		refreshPeerList()
+	//}
 }
