@@ -117,9 +117,13 @@ func Sha512Word(word string) (hash string, err error) {
 	return
 }
 
-func (s *LocalStorage) saveFilename(hash string, filename string) {
+func (s *LocalStorage) saveFilename(hash string, filename string) error {
 	var err error
 	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash))
+	// mkdir -p
+	if err = os.MkdirAll(newpath, 0700); err != nil && !os.IsExist(err) {
+		return err
+	}
 	var f1 io.WriteCloser
 	f1, err = os.OpenFile(filepath.Join(newpath, "filename"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
 	if err == nil {
@@ -127,6 +131,7 @@ func (s *LocalStorage) saveFilename(hash string, filename string) {
 		defer f1.Close()
 		io.Copy(f1, strings.NewReader(fmt.Sprintf("%s\n", filename)))
 	}
+	return err
 }
 
 func (s *LocalStorage) HardLinkSha512Path(oldpath string, filename string) (hash string, contentLength uint64, err error) {
