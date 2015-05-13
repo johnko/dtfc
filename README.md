@@ -76,6 +76,7 @@ see `scripts/load-dependencies.sh`
   - [x] GET /health.html: 200 OK
   - [x] GET /sha512: data, or peerload
   - [x] GET /sha512/nopeerload: data, don't peerload
+  - [ ] GET /sha512/ffmetadata: metadata parsed from ffmpeg
   - [ ] DELETE /sha512: ??? may have problems if a node was offline while DELETE command was sent?
 - Security:
   - [ ] figure out how to do authentication/authorization
