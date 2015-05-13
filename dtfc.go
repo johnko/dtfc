@@ -222,8 +222,6 @@ func getFromPeers(oldhash string) (found bool, filename string, reader io.ReadSe
 			}
 		}
 	}
-	if found == true {
-		PEERLOADING[oldhash] = false
-	}
+	PEERLOADING[oldhash] = false
 	return
 }
