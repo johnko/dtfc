@@ -48,10 +48,10 @@ curl -s -v -X GET http://${LOCALHOST}:8002/${LICENSEHASH} 2>&1 | grep 'The MIT L
 
 curl -s -v -X GET http://${LOCALHOST}:8003/${LICENSEHASH} 2>&1 | grep 'The MIT License' || exiterror 1 "couldn't GET license.txt"
 
-curl -s -v -X GET http://${LOCALHOST}:8003/404 2>&1 | grep '404 Not Found\.' || exiterror 1 "This is supposed to 404"
+curl -s -v -X GET http://${LOCALHOST}:8003/404404404404404404404404404 2>&1 | grep '404 Not Found\.' || exiterror 1 "This is supposed to 404"
 
 curl -s -v -X HEAD http://${LOCALHOST}:8003/${LICENSEHASH}
 
-curl -s -v -X HEAD http://${LOCALHOST}:8003/404
+curl -s -v -X HEAD http://${LOCALHOST}:8003/404404404404404404404404404
 
 exiterror 0
