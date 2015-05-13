@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"io"
+	"log"
 	//"mime"
 	"net/http"
 	"os"
