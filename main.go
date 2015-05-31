@@ -35,6 +35,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"math/rand"
+	"mime"
 	"net/http"
 	"os"
 	"strings"
@@ -204,6 +205,9 @@ func main() {
 	if err != nil {
 		log.Panic("Error while creating storage.", err)
 	}
+
+	mime.AddExtensionType(".md", "text/x-markdown")
+	mime.AddExtensionType(".mkv", "video/webm") // works on Google Chrome
 
 	log.Printf("%s/%s server started. listening on port: %v",
 		SERVER_INFO, SERVER_VERSION, *port)
