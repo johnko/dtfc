@@ -45,6 +45,9 @@ type Storage interface {
 	HardLinkSha512(token string, filename string) (hash string, contentLength uint64, err error)
 	DeleteFile(token string, filename string) error
 	saveFilename(hash string, filename string) error
+	add404(hash string) error
+	has404(hash string) bool
+	has403(hash string) bool
 }
 
 type LocalStorage struct {

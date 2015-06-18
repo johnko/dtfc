@@ -43,7 +43,7 @@ import (
 )
 
 const SERVER_INFO = "dtfc"
-const SERVER_VERSION = "0.0.4"
+const SERVER_VERSION = "0.0.5"
 
 // we use these commands to reduce the amount of garbage collection golang needs to do
 const cmdSHASUMFreeBSD = "/usr/local/bin/shasum"
@@ -190,6 +190,7 @@ func main() {
 	r.HandleFunc("/{hash}", getHandler).Methods("GET")
 
 	r.HandleFunc("/{hash}", headHandler).Methods("HEAD")
+	r.HandleFunc("/{hash}", deleteHandler).Methods("DELETE")
 
 	r.HandleFunc("/{filename}", putHandler).Methods("PUT")
 

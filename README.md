@@ -49,8 +49,8 @@ see `scripts/load-dependencies.sh`
   - [ ] couchdb on localhost? to save map of sha512/filename
 - Permissions:
   - [x] rwx like Unix 777, except it's GET, PUT, DELETE (to deny, set denyput or denyget ...)
-  - [ ] per hash, if file named "404" exists, return HTTP.404
-  - [ ] per hash, if file named "403" exists, return HTTP.403
+  - [x] per hash, if file named "404" exists, return HTTP.404
+  - [x] per hash, if file named "403" exists, return HTTP.403
 - Peering:
   - [x] sequential
   - [x] set peers without restarting the program by rereading the peerlist?
@@ -77,7 +77,8 @@ see `scripts/load-dependencies.sh`
   - [x] GET /sha512: data, or peerload
   - [x] GET /sha512/nopeerload: data, don't peerload
   - [ ] GET /sha512/ffmetadata: metadata parsed from ffmpeg
-  - [ ] DELETE /sha512: ??? may have problems if a node was offline while DELETE command was sent?
+  - [x] DELETE /sha512: ok for current node
+  - [ ] DELETE /sha512/allpeers: ??? may have problems if a node was offline while DELETE command was sent?
 - Security:
   - [ ] figure out how to do authentication/authorization
 - Proxy:

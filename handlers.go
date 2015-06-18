@@ -104,6 +104,14 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "404 Not Found.", 404)
 			return
 		}
+		if storage.has403(hash) {
+			http.Error(w, "403 Forbidden.", 403)
+			return
+		}
+		if storage.has404(hash) {
+			http.Error(w, "404 Not Found.", 404)
+			return
+		}
 		filename, reader, _, modTime, err = storage.Seeker(hash)
 		if err != nil {
 			if strings.Index(err.Error(), "no such file or directory") >= 0 {

@@ -40,6 +40,78 @@ import (
 	"time"
 )
 
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	if allowedDelete() {
+		vars := mux.Vars(r)
+		hash := vars["hash"]
+		err := storage.add404(hash)
+		if err != nil {
+			// we only care about the status code
+			http.Error(w, "404 Not Found.", 404)
+			return
+		}
+		//_, _, _, err := storage.Head(hash)
+		filename, contentLength, _, err := storage.Head(hash)
+		contentType := mime.TypeByExtension(filepath.Ext(filename))
+		if err != nil {
+			// we only care about the status code
+			http.Error(w, "404 Not Found.", 404)
+			return
+		} else {
+			// you may want the json?
+			fmt.Fprintf(w, "{\"deleted\":true,\"sha512\":\"%s\",\"filename\":\"%s\",\"length\":%d,\"content_type\":\"%s\",\"stub\":true}", hash, filename, contentLength, strings.Split(contentType, ";")[0])
+		}
+	} else {
+		// we only care about the status code
+		http.Error(w, "403 Forbidden. Deletion is disabled.", 403)
+	}
+}
+
+func (s *LocalStorage) add404(hash string) error {
+	var err error
+	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash))
+	// mkdir -p
+	if err = os.MkdirAll(newpath, 0700); err != nil && !os.IsExist(err) {
+		return err
+	}
+	var f1 io.WriteCloser
+	f1, err = os.OpenFile(filepath.Join(newpath, "404"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
+	if err == nil {
+		defer f1.Close()
+		io.Copy(f1, strings.NewReader(" "))
+	}
+}
+
+func (s *LocalStorage) has404(hash string) bool {
+	var err error
+	var result = false
+	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash), "404")
+	// mkdir -p
+	if err = os.Lstat(newpath); err != nil {
+		if !os.IsExist(err) {
+			result = false
+		}
+	} else {
+		result = true
+	}
+	return result
+}
+
+func (s *LocalStorage) has403(hash string) bool {
+	var err error
+	var result = false
+	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash), "403")
+	// mkdir -p
+	if err = os.Lstat(newpath); err != nil {
+		if !os.IsExist(err) {
+			result = false
+		}
+	} else {
+		result = true
+	}
+	return result
+}
+
 func fileNotExists(str string) bool {
 	var err error
 	if _, err = os.Lstat(config.DENY + str); err != nil {
