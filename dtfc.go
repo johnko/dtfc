@@ -28,9 +28,11 @@ import (
 	//"crypto/tls"
 	//"crypto/x509"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io"
 	"log"
 	//"math/rand"
+	"mime"
 	"net/http"
 	"os"
 	"os/exec"
@@ -80,6 +82,7 @@ func (s *LocalStorage) add404(hash string) error {
 		defer f1.Close()
 		io.Copy(f1, strings.NewReader(" "))
 	}
+	return nil
 }
 
 func (s *LocalStorage) has404(hash string) bool {
@@ -87,7 +90,7 @@ func (s *LocalStorage) has404(hash string) bool {
 	var result = false
 	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash), "404")
 	// mkdir -p
-	if err = os.Lstat(newpath); err != nil {
+	if _, err = os.Lstat(newpath); err != nil {
 		if !os.IsExist(err) {
 			result = false
 		}
@@ -102,7 +105,7 @@ func (s *LocalStorage) has403(hash string) bool {
 	var result = false
 	newpath := filepath.Join(s.basedir, SplitHashToPairSlash(hash), "403")
 	// mkdir -p
-	if err = os.Lstat(newpath); err != nil {
+	if _, err = os.Lstat(newpath); err != nil {
 		if !os.IsExist(err) {
 			result = false
 		}
